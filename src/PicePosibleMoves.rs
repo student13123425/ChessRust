@@ -234,8 +234,39 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     out
 }
 
-fn queen_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+pub fn queen_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = bishop_moves(&pice, board);
     out.append(&mut rook_moves(&pice, board));
     return out;
+}
+
+pub fn knight_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = vec![];
+    let pos = pice.pos;
+    let board_state = board.get_board_state();
+    let mut side = 2;
+    if !pice.side {
+        side = 1;
+    }
+
+    let moves = [
+        (pos.x - 2, pos.y - 1),
+        (pos.x - 2, pos.y + 1),
+        (pos.x - 1, pos.y - 2),
+        (pos.x - 1, pos.y + 2),
+        (pos.x + 1, pos.y - 2),
+        (pos.x + 1, pos.y + 2),
+        (pos.x + 2, pos.y - 1),
+        (pos.x + 2, pos.y + 1),
+    ];
+
+    for (x, y) in moves {
+        if x >= 0 && x < 8 && y >= 0 && y < 8 {
+            let v = get_id_side(board_state[x as usize][y as usize]);
+            if v != side {
+                out.push(Vec2D::new(x, y));
+            }
+        }
+    }
+    return out
 }

@@ -49,3 +49,21 @@ impl Line2D {
         Vec2D::new(x, y)
     }
 }
+
+pub fn get_board_draw_positions(start_x: i32, start_y: i32, board_size: i32) -> Vec<Vec<Vec2D>> {
+    let tile_size = board_size / 8;
+    let mut centers = Vec::with_capacity(8);
+
+    for row in 0..8 {
+        let mut row_centers = Vec::with_capacity(8);
+        for col in 0..8 {
+            let x = start_x + (col * tile_size);
+            let y = start_y + (row * tile_size);
+
+            let rect = Rect2D::new(x, y, tile_size, tile_size);
+            row_centers.push(rect.get_center());
+        }
+        centers.push(row_centers);
+    }
+    centers
+}

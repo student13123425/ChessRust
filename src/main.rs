@@ -1,8 +1,11 @@
 mod Background;
 mod Aox;
+mod Pice;
+mod TextureMap;
+mod Board;
 
 use raylib::prelude::*;
-use crate::Aox::Vec2D;
+use crate::Aox::{get_board_draw_positions, Vec2D};
 use crate::Background::draw_background;
 
 fn main() {
@@ -16,7 +19,7 @@ fn main() {
         let mut d = rl.begin_drawing(&thread);
 
         d.clear_background(Color::RAYWHITE);
-
-        let pices_center:Vec<Vec<Vec2D>>=draw_background(&mut d,0,0,width);
+        draw_background(&mut d,0,0,1000);
+        let pices_center:Vec<Vec<Vec2D>>=get_board_draw_positions(0,0,1000);
     }
 }

@@ -2,8 +2,8 @@ use raylib::prelude::RaylibDrawHandle;
 use crate::Aox::{Line2D, Vec2D};
 const AnimationSpeed:f32=50.0;
 pub struct Pice {
-    pos:Vec2D,
-    TextureID:i32,
+    pub(crate) pos:Vec2D,
+    pub TextureID:i32,
     animation:f32,
     LineBuffer:Line2D,
     is_moving:bool,

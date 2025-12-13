@@ -15,21 +15,17 @@ impl Board {
 
         let back_rank_ids = [2, 4, 3, 1, 0, 3, 4, 2];
 
-        //back rang black
         for (col, &id) in back_rank_ids.iter().enumerate() {
             black_pices.push(Pice::new(Vec2D::new(0, col as i32), id, false));
         }
-        //pawns black
         for col in 0..8 {
             black_pices.push(Pice::new(Vec2D::new(1, col as i32), 5, false));
         }
 
-        //back rank white
         for (col, &id) in back_rank_ids.iter().enumerate() {
             white_pices.push(Pice::new(Vec2D::new(7, col as i32), id, true));
         }
 
-        //pawns white
         for col in 0..8 {
             white_pices.push(Pice::new(Vec2D::new(6, col as i32), 5, true));
         }
@@ -39,5 +35,27 @@ impl Board {
             WhitePices: white_pices,
             positions: pos,
         }
+    }
+
+    pub fn get_board_state(&self) -> Vec<Vec<i32>> {
+        let mut board = vec![vec![-1; 8]; 8];
+
+        for pice in &self.WhitePices {
+            let r = pice.pos.x as usize;
+            let c = pice.pos.y as usize;
+            if r < 8 && c < 8 {
+                board[r][c] = pice.TextureID;
+            }
+        }
+
+        for pice in &self.BlackPices {
+            let r = pice.pos.x as usize;
+            let c = pice.pos.y as usize;
+            if r < 8 && c < 8 {
+                board[r][c] = pice.TextureID + 8;
+            }
+        }
+
+        return board
     }
 }

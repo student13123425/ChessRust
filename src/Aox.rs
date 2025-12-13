@@ -11,7 +11,9 @@ impl Vec2D {
     pub fn is_null(&self)->bool{
         return self.x==-1&&self.y==-1;
     }
-    
+    pub fn compair(&self,other:&Vec2D)->bool{
+        return self.x==other.x&&self.y==other.y;
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -30,11 +32,12 @@ impl Rect2D {
             width,
             height,
         }
-
-        
     }
     pub fn get_center(&self) -> Vec2D {
         Vec2D::new(self.x + (self.width / 2), self.y + (self.height / 2))
+    }
+    pub fn contains(&self, point: Vec2D) -> bool {
+        point.x >= self.x && point.x <= self.x + self.width && point.y >= self.y && point.y <= self.y + self.height
     }
 }
 

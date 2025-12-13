@@ -7,7 +7,7 @@ pub struct Pice {
     animation:f32,
     LineBuffer:Line2D,
     is_moving:bool,
-    side:bool
+    pub(crate) side:bool
 }
 
 impl Pice {

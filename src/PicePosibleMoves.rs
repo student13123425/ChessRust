@@ -154,3 +154,82 @@ pub fn rook_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
     return out
 }
 
+pub fn bishop_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = vec![];
+    let pos = pice.pos;
+    let board_state = board.get_board_state();
+    let mut side = 2;
+    if !pice.side {
+        side = 1;
+    }
+    let mut arr = vec![false, false, false, false];
+
+    for v in 1..8 {
+        let v_i32 = v as i32;
+
+        if !arr[0] {
+            if pos.x - v_i32 >= 0 && pos.y - v_i32 >= 0 {
+                let v1 = get_id_side(board_state[(pos.x - v_i32) as usize][(pos.y - v_i32) as usize]);
+                if v1 != side {
+                    if v1 != 0 {
+                        arr[0] = true;
+                    }
+                    out.push(Vec2D::new(pos.x - v_i32, pos.y - v_i32));
+                } else {
+                    arr[0] = true;
+                }
+            } else {
+                arr[0] = true;
+            }
+        }
+
+        if !arr[1] {
+            if pos.x - v_i32 >= 0 && pos.y + v_i32 < 8 {
+                let v2 = get_id_side(board_state[(pos.x - v_i32) as usize][(pos.y + v_i32) as usize]);
+                if v2 != side {
+                    if v2 != 0 {
+                        arr[1] = true;
+                    }
+                    out.push(Vec2D::new(pos.x - v_i32, pos.y + v_i32));
+                } else {
+                    arr[1] = true;
+                }
+            } else {
+                arr[1] = true;
+            }
+        }
+
+        if !arr[2] {
+            if pos.x + v_i32 < 8 && pos.y - v_i32 >= 0 {
+                let v3 = get_id_side(board_state[(pos.x + v_i32) as usize][(pos.y - v_i32) as usize]);
+                if v3 != side {
+                    if v3 != 0 {
+                        arr[2] = true;
+                    }
+                    out.push(Vec2D::new(pos.x + v_i32, pos.y - v_i32));
+                } else {
+                    arr[2] = true;
+                }
+            } else {
+                arr[2] = true;
+            }
+        }
+
+        if !arr[3] {
+            if pos.x + v_i32 < 8 && pos.y + v_i32 < 8 {
+                let v4 = get_id_side(board_state[(pos.x + v_i32) as usize][(pos.y + v_i32) as usize]);
+                if v4 != side {
+                    if v4 != 0 {
+                        arr[3] = true;
+                    }
+                    out.push(Vec2D::new(pos.x + v_i32, pos.y + v_i32));
+                } else {
+                    arr[3] = true;
+                }
+            } else {
+                arr[3] = true;
+            }
+        }
+    }
+    out
+}

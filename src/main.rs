@@ -6,6 +6,7 @@ mod Board;
 mod Move;
 mod PicePosibleMoves;
 mod Game;
+mod Rendering;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -20,7 +21,7 @@ fn main() {
     let mut game:Game::Game=Game::Game::new(&mut rl,&thread);
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
-    
+
         d.clear_background(Color::RAYWHITE);
         game.render(&mut d);
         game.update();

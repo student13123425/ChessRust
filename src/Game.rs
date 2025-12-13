@@ -22,8 +22,9 @@ impl Game {
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
         draw_background(d,0,0,1000);
+        self.board.render(d,&self.texture_map);
     }
     pub fn update(&mut self){
-        
+
     }
 }

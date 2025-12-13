@@ -1,10 +1,12 @@
+use raylib::drawing::RaylibDrawHandle;
 use crate::Aox::{get_board_draw_positions, Vec2D};
 use crate::Pice::Pice;
+use crate::TextureMap::TextureMap;
 
 pub struct Board {
     pub BlackPices: Vec<Pice>,
     pub WhitePices: Vec<Pice>,
-    pub positions: Vec<Vec<Vec2D>>,
+    pub positions: Vec<Vec<Vec2D>>
 }
 
 impl Board {
@@ -57,5 +59,26 @@ impl Board {
         }
 
         return board
+    }
+    pub fn render(&self,d:&mut RaylibDrawHandle,texture_map:&TextureMap){
+        for pice in &self.WhitePices{
+            pice.render(d,&self.positions,texture_map)
+        }
+        for pice in &self.BlackPices{
+            pice.render(d,&self.positions,texture_map)
+        }
+    }
+    pub fn get_is_pice_moving(&self)->bool{
+        for pice in &self.WhitePices{
+            if(pice.is_moving) {
+                return true;
+            }
+        }
+        for pice in &self.BlackPices{
+            if(pice.is_moving) {
+                return true;
+            }
+        }
+        return false;
     }
 }

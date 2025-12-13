@@ -3,6 +3,7 @@ mod Aox;
 mod Pice;
 mod TextureMap;
 mod Board;
+mod Move;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};

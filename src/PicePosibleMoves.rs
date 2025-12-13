@@ -12,7 +12,7 @@ fn get_id_side(id: i32) -> i32 {
     2
 }
 
-pub fn pawn_move(pice: Pice, board: &Board) -> Vec<Vec2D> {
+pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
     let board_state = board.get_board_state();
     let mut o = 1;
@@ -74,7 +74,7 @@ pub fn pawn_move(pice: Pice, board: &Board) -> Vec<Vec2D> {
 
 
 
-pub fn rook_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
     let pos = pice.pos;
     let board_state = board.get_board_state();
@@ -154,7 +154,7 @@ pub fn rook_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
     return out
 }
 
-pub fn bishop_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
     let pos = pice.pos;
     let board_state = board.get_board_state();
@@ -232,4 +232,10 @@ pub fn bishop_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
         }
     }
     out
+}
+
+fn queen_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = bishop_moves(&pice, board);
+    out.append(&mut rook_moves(&pice, board));
+    return out;
 }

@@ -1,3 +1,5 @@
+use std::cmp::{max, min};
+use raylib::drawing::RaylibDrawHandle;
 use crate::Aox::Vec2D;
 use crate::Board::Board;
 use crate::Pice::Pice;
@@ -71,8 +73,6 @@ pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     }
     out
 }
-
-
 
 pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
@@ -234,13 +234,13 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     out
 }
 
-pub fn queen_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
-    let mut out: Vec<Vec2D> = bishop_moves(&pice, board);
-    out.append(&mut rook_moves(&pice, board));
+pub fn queen_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = bishop_moves(pice, board);
+    out.append(&mut rook_moves(pice, board));
     return out;
 }
 
-pub fn knight_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
+pub fn knight_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
     let pos = pice.pos;
     let board_state = board.get_board_state();
@@ -269,4 +269,82 @@ pub fn knight_moves(pice: Pice, board: &Board) -> Vec<Vec2D> {
         }
     }
     return out
+}
+
+pub fn king_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = vec![];
+    let pos = pice.pos;
+    let board_state = board.get_board_state();
+    let mut side = 2;
+    if !pice.side {
+        side = 1;
+    }
+
+    for i in -1..=1 {
+        for j in -1..=1 {
+            if i == 0 && j == 0 {
+                continue;
+            }
+            let nx = pos.x + i;
+            let ny = pos.y + j;
+
+            if nx >= 0 && nx < 8 && ny >= 0 && ny < 8 {
+                let v = get_id_side(board_state[nx as usize][ny as usize]);
+                if v != side {
+                    out.push(Vec2D::new(nx, ny));
+                }
+            }
+        }
+    }
+    out
+}
+
+pub struct PosibleMoves {
+    pub moves: Vec<Vec2D>,
+    pub opacity: f32
+}
+
+impl PosibleMoves {
+    pub fn new() -> Self {
+        Self {
+            moves: Vec::new(),
+            opacity: 0.0,
+        }
+    }
+
+    pub fn compute_moves(&mut self, pice: &Pice, board: &Board) {
+        self.moves.clear();
+        let calculated_moves = match pice.TextureID {
+            0 => king_moves(pice, board),
+            1 => queen_moves(pice, board),
+            2 => rook_moves(pice, board),
+            3 => bishop_moves(pice, board),
+            4 => knight_moves(pice, board),
+            5 => pawn_move(pice, board),
+            _ => vec![],
+        };
+        self.moves = calculated_moves;
+    }
+
+    pub fn clear(&mut self) {
+        self.moves = Vec::new();
+    }
+
+    fn update_animation(&mut self, _d: &mut RaylibDrawHandle, frame_time: f32) {
+        let is_active = self.moves.len() > 0;
+        if is_active {
+            self.opacity += 15.0 * frame_time;
+        } else {
+            self.opacity -= 15.0 * frame_time;
+        }
+        if self.opacity < 0.0 {
+            self.opacity = 0.0;
+        } else if self.opacity > 1.0 {
+            self.opacity = 1.0;
+        }
+    }
+
+    pub fn update(&mut self, d: &mut RaylibDrawHandle) {
+        self.update_animation(d, d.get_frame_time());
+    }
 }

@@ -2,6 +2,7 @@ mod Background;
 mod Aox;
 
 use raylib::prelude::*;
+use crate::Aox::Vec2D;
 use crate::Background::draw_background;
 
 fn main() {
@@ -16,6 +17,6 @@ fn main() {
 
         d.clear_background(Color::RAYWHITE);
 
-        draw_background(&mut d,0,0,width);
+        let pices_center:Vec<Vec<Vec2D>>=draw_background(&mut d,0,0,width);
     }
 }

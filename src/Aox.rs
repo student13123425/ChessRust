@@ -42,4 +42,5 @@ impl Line2D {
     pub fn new(start: Vec2D, end: Vec2D) -> Self {
         Self { start, end }
     }
+    
 }

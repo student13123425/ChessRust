@@ -1,12 +1,15 @@
 use raylib::color::Color;
 use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
+use crate::Aox::{Rect2D, Vec2D};
 
-fn draw_chess_board(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32) {
+pub fn draw_chess_board(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32) -> Vec<Vec<Vec2D>> {
     let tile_size = board_size / 8;
     let light_color = Color::new(238, 238, 210, 255);
     let dark_color = Color::new(118, 150, 86, 255);
+    let mut centers = Vec::with_capacity(8);
 
     for row in 0..8 {
+        let mut row_centers = Vec::with_capacity(8);
         for col in 0..8 {
             let color = if (row + col) % 2 == 0 {
                 light_color
@@ -18,8 +21,13 @@ fn draw_chess_board(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_
             let y = start_y + (row * tile_size);
 
             d.draw_rectangle(x, y, tile_size, tile_size, color);
+
+            let rect = Rect2D::new(x, y, tile_size, tile_size);
+            row_centers.push(rect.get_center());
         }
+        centers.push(row_centers);
     }
+    centers
 }
 
 fn draw_chess_notation(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32) {
@@ -44,7 +52,7 @@ fn draw_chess_notation(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, boa
     }
 }
 
-pub fn draw_background(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32){
+pub fn draw_background(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32)-> Vec<Vec<Vec2D>> {
     draw_chess_notation(d, start_x, start_y, board_size);
-    draw_chess_board(d, start_x, start_y, board_size);
+    return draw_chess_board(d, start_x, start_y, board_size);
 }

@@ -17,12 +17,13 @@ fn main() {
         .size(width, 1100)
         .title("Raylib Rust Chess Board")
         .build();
-
+    let mut game:Game::Game=Game::Game::new(&mut rl,&thread);
     while !rl.window_should_close() {
         let mut d = rl.begin_drawing(&thread);
-
+    
         d.clear_background(Color::RAYWHITE);
+        game.render(&mut d);
+        game.update();
         draw_background(&mut d,0,0,1000);
-        let pices_center:Vec<Vec<Vec2D>>=get_board_draw_positions(0,0,1000);
     }
 }

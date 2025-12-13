@@ -27,7 +27,7 @@ impl Pice {
 
     pub fn render(&self,rl:&mut RaylibDrawHandle,positions:&Vec<Vec<Vec2D>>,t:&TextureMap){
         let pos=self.compute_position(positions);
-        let height=60;
+        let height=95;
         if(self.side) {
             draw_centered_texture(rl, &t.white_textures[self.TextureID as usize], pos, height, false);
         }else{

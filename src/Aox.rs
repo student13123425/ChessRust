@@ -27,7 +27,9 @@ impl Rect2D {
             height,
         }
     }
-    
+    pub fn get_center(&self) -> Vec2D {
+        Vec2D::new(self.x + (self.width / 2), self.y + (self.height / 2))
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

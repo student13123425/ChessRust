@@ -20,6 +20,8 @@ pub fn draw_chess_board(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, bo
     }
 }
 
+
+
 fn draw_chess_notation(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32) {
     let tile_size = board_size / 8;
     let font_size = 20;

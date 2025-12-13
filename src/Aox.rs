@@ -69,3 +69,16 @@ pub fn get_board_draw_positions(start_x: i32, start_y: i32, board_size: i32) -> 
     }
     centers
 }
+
+pub fn get_click_rect(start_x: i32, start_y: i32, board_size: i32)->Vec<Rect2D>{
+    let tile_size = board_size / 8;
+    let mut out:Vec<Rect2D>=vec![];
+    for row in 0..8 {
+        for col in 0..8 {
+            let x = start_x + (col * tile_size);
+            let y = start_y + (row * tile_size);
+            out.push(Rect2D::new(x, y, tile_size, tile_size));
+        }
+    }
+    return out;
+}

@@ -8,6 +8,7 @@ impl Vec2D {
     pub fn new(x: i32, y: i32) -> Self {
         Self { x, y }
     }
+
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -42,5 +43,9 @@ impl Line2D {
     pub fn new(start: Vec2D, end: Vec2D) -> Self {
         Self { start, end }
     }
-    
+    pub fn point_at(&self, t: f32) -> Vec2D {
+        let x = (self.start.x as f32 + (self.end.x - self.start.x) as f32 * t).round() as i32;
+        let y = (self.start.y as f32 + (self.end.y - self.start.y) as f32 * t).round() as i32;
+        Vec2D::new(x, y)
+    }
 }

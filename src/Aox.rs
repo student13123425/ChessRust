@@ -11,6 +11,7 @@ impl Vec2D {
     pub fn is_null(&self)->bool{
         return self.x==-1&&self.y==-1;
     }
+    
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -29,6 +30,8 @@ impl Rect2D {
             width,
             height,
         }
+
+        
     }
     pub fn get_center(&self) -> Vec2D {
         Vec2D::new(self.x + (self.width / 2), self.y + (self.height / 2))
@@ -70,15 +73,17 @@ pub fn get_board_draw_positions(start_x: i32, start_y: i32, board_size: i32) -> 
     centers
 }
 
-pub fn get_click_rect(start_x: i32, start_y: i32, board_size: i32)->Vec<Rect2D>{
+pub fn get_click_rect(start_x: i32, start_y: i32, board_size: i32) -> Vec<Vec<Rect2D>> {
     let tile_size = board_size / 8;
-    let mut out:Vec<Rect2D>=vec![];
+    let mut out: Vec<Vec<Rect2D>> = Vec::new();
     for row in 0..8 {
+        let mut row_vec: Vec<Rect2D> = Vec::new();
         for col in 0..8 {
             let x = start_x + (col * tile_size);
             let y = start_y + (row * tile_size);
-            out.push(Rect2D::new(x, y, tile_size, tile_size));
+            row_vec.push(Rect2D::new(x, y, tile_size, tile_size));
         }
+        out.push(row_vec);
     }
-    return out;
+    out
 }

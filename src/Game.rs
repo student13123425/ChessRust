@@ -1,7 +1,7 @@
 use std::thread::Thread;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::{RaylibHandle, RaylibThread};
-use crate::Aox::Vec2D;
+use crate::Aox::{get_click_rect, Rect2D, Vec2D};
 use crate::Background::draw_background;
 use crate::Board::Board;
 use crate::PicePosibleMoves::PosibleMoves;
@@ -11,7 +11,8 @@ pub struct Game {
     pub board: Board,
     pub selected_pice:Vec2D,
     pub texture_map: TextureMap,
-    pub moves:PosibleMoves
+    pub moves:PosibleMoves,
+    pub click_rects:Vec<Vec<Rect2D>>
 }
 
 impl Game {
@@ -20,7 +21,8 @@ impl Game {
             board: Board::new(),
             selected_pice:Vec2D::new(-1,-1),
             texture_map:TextureMap::new(rl,raylib_thread),
-            moves:PosibleMoves::new()
+            moves:PosibleMoves::new(),
+            click_rects:get_click_rect(0,0,1000);
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){

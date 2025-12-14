@@ -39,6 +39,16 @@ impl Board {
             positions: pos,
         }
     }
+
+    pub fn update(&mut self, d: &mut RaylibDrawHandle) {
+        for pice in &mut self.WhitePices {
+            pice.update(d);
+        }
+        for pice in &mut self.BlackPices {
+            pice.update(d);
+        }
+    }
+
     pub fn get_pice_side(&self,side:bool)->Vec<Pice>{
         let mut out=Vec::new();
         let mut values=&self.BlackPices;

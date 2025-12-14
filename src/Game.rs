@@ -34,25 +34,74 @@ impl Game {
         self.board.render(d,&self.texture_map);
         self.moves.render(d,&self.board.positions);
     }
+
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
+        self.board.update(d);
+
         if(self.board.get_is_pice_moving()){
             self.process_deselect();
         }
         self.moves.update(d);
-        self.process_pice_select(d);
-        self.process_pice_start_move(d);
+
+        let moved = self.process_pice_start_move(d);
+        if !moved {
+            self.process_pice_select(d);
+        }
     }
+
     pub fn process_click(&mut self,point:Vec2D,pice: &Pice){
         self.selected_pice=Vec2D::new(point.x,point.y);
         self.moves.compute_moves(pice,&self.board);
     }
+
     pub fn process_deselect(&mut self){
         self.selected_pice=Vec2D::new(-1,-1);
         self.moves.clear();
     }
-    pub fn process_pice_start_move(&mut self, d: &mut RaylibDrawHandle,moves:PosibleMoves,move_index:i32){
 
+    pub fn process_pice_start_move(&mut self, d: &mut RaylibDrawHandle) -> bool {
+        let mouse_pos:Vec2D=Vec2D::new(d.get_mouse_x(),d.get_mouse_y());
+
+        for i in 0..self.moves.moves.len(){
+            let pos=&self.moves.moves[i];
+            let rect:&Rect2D=&self.click_rects[pos.x as usize][pos.y as usize];
+            let is_hover=rect.contains(mouse_pos);
+            let is_cliked=d.is_mouse_button_released(MOUSE_BUTTON_LEFT);
+
+            if is_hover && is_cliked {
+                self.process_move(pos.clone());
+                return true;
+            }
+        }
+        return false;
     }
+
+    pub fn process_move(&mut self,end:Vec2D){
+        let start=self.selected_pice;
+        let mut pices=&mut self.board.BlackPices;
+        if(self.side){
+            pices=&mut self.board.WhitePices;
+        }
+        for p in pices{
+            let is_selected_pice=p.pos.compair(&start);
+            if(is_selected_pice){
+                p.move_pice(&end);
+                break;
+            }
+        }
+        self.side=!self.side;
+        pices=&mut self.board.BlackPices;
+        if(self.side){
+            pices=&mut self.board.WhitePices;
+        }
+        for p in pices{
+            if(p.pos.compair(&end)){
+                p.take();
+                break;
+            }
+        }
+    }
+
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let mut values=self.board.get_pice_side(self.side);
         let mut data:Vec<Vec2D>=Vec::new();
@@ -62,19 +111,27 @@ impl Game {
             }
         }
         let mouse_pos:Vec2D=Vec2D::new(d.get_mouse_x(),d.get_mouse_y());
+
         for i in 0..8{
             for j in 0..8{
                 let point=Vec2D::new(i,j);
                 let is_hover=self.click_rects[i as usize][j as usize].contains(mouse_pos);
                 let is_cliked=d.is_mouse_button_released(MOUSE_BUTTON_LEFT);
-                if(is_cliked&&is_hover){
-                    for i in 0..data.len(){
-                        if(data[i].compair(&point)) {
-                            self.process_click(point,&values[i]);
-                            return
+
+                if is_cliked && is_hover {
+                    let mut clicked_friendly = false;
+                    for k in 0..data.len(){
+                        if data[k].compair(&point) {
+                            self.process_click(point, &values[k]);
+                            clicked_friendly = true;
+                            break;
                         }
-                        self.process_deselect()
                     }
+
+                    if !clicked_friendly {
+                        self.process_deselect();
+                    }
+                    return;
                 }
             }
         }

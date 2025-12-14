@@ -316,9 +316,10 @@ pub fn king_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     out
 }
 
+#[derive(Clone)]
 pub struct PosibleMoves {
     pub moves: Vec<Vec2D>,
-    pub opacity: f32
+    pub opacity: f32,
 }
 
 impl PosibleMoves {
@@ -350,7 +351,7 @@ impl PosibleMoves {
 
     fn update_animation(&mut self, _d: &mut RaylibDrawHandle, frame_time: f32) {
         let is_active = self.moves.len() > 0;
-        let speed=5.0;
+        let speed = 5.0;
         if is_active {
             self.opacity += speed * frame_time;
         } else {
@@ -362,15 +363,17 @@ impl PosibleMoves {
             self.opacity = 1.0;
         }
     }
-    pub fn render(&mut self, d: &mut RaylibDrawHandle,positions:&Vec<Vec<Vec2D>>){
+
+    pub fn render(&mut self, d: &mut RaylibDrawHandle, positions: &Vec<Vec<Vec2D>>) {
         for move_pos in &self.moves {
-            let pos=positions[move_pos.x as usize][move_pos.y as usize];
-            let size=100.0;
-            let roundes=0.2;
-            let color=Color::new(255,0,0,(255.0*self.opacity) as u8);
-            draw_rounded_rect_center(d,size,size,roundes,pos,color)
+            let pos = positions[move_pos.x as usize][move_pos.y as usize];
+            let size = 100.0;
+            let roundes = 0.2;
+            let color = Color::new(255, 0, 0, (255.0 * self.opacity) as u8);
+            draw_rounded_rect_center(d, size, size, roundes, pos, color)
         }
     }
+
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         self.update_animation(d, d.get_frame_time());
     }

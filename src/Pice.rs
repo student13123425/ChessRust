@@ -46,7 +46,11 @@ impl Pice {
         self.is_taken=true;
         self.animation=1.0;;
     }
-
+    pub fn move_pice(&mut self,end:&Vec2D){
+        self.is_moving=true;
+        self.animation=0.0;
+        self.LineBuffer=Line2D::new(Vec2D::new(self.pos.x,self.pos.y),end.clone());
+    }
     pub fn compute_position(&self, positions: &Vec<Vec<Vec2D>>) -> Vec2D {
         let pos: Vec2D = positions[self.pos.x as usize][self.pos.y as usize];
         if !self.is_moving {
@@ -71,12 +75,14 @@ impl Pice {
             self.animation += AnimationSpeed * rl.get_frame_time();
         }
         if self.animation >= 1.0 {
-            self.animation = 0.0;
-            self.is_moving = false;
-            self.pos = Vec2D::new(self.LineBuffer.end.x, self.LineBuffer.end.y);
+            self.process_animation_end();
         }
     }
-
+    pub fn process_animation_end(&mut self){
+        self.animation = 0.0;
+        self.is_moving = false;
+        self.pos = Vec2D::new(self.LineBuffer.end.x, self.LineBuffer.end.y);
+    }
     pub fn update(&mut self, rl: &mut RaylibDrawHandle) {
         self.update_animation(rl);
     }

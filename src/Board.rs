@@ -38,7 +38,17 @@ impl Board {
             positions: pos,
         }
     }
-
+    pub fn get_pice_side(&self,side:bool)->Vec<Pice>{
+        let mut out=Vec::new();
+        let mut values=&self.BlackPices;
+        if(side) {
+            values = &self.WhitePices;
+        }
+        for pice in values{
+            out.push(pice.clone());
+        }
+        return out;
+    }
     pub fn get_board_state(&self) -> Vec<Vec<i32>> {
         let mut board = vec![vec![-1; 8]; 8];
 

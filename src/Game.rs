@@ -42,10 +42,7 @@ impl Game {
         self.moves.compute_moves(pice,&self.board);
     }
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
-        let mut values=&self.board.BlackPices;
-        if(self.side) {
-            values = &self.board.WhitePices;
-        }
+        let mut values=self.board.get_pice_side(self.side);
         let mut data:Vec<Vec2D>=Vec::new();
         for v in 0..(values).len(){
             data.push(Vec2D::new(values[v].pos.x,values[v].pos.x))

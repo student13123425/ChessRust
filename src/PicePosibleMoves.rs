@@ -18,6 +18,10 @@ fn get_id_side(id: i32) -> i32 {
 
 pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
+    if pice.is_taken {
+        return out;
+    }
+
     let board_state = board.get_board_state();
     let mut o = 1;
     if pice.side {
@@ -49,8 +53,11 @@ pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     if s2 == side {
         out.push(Vec2D::new(front_x, pice.pos.y + 1))
     }
-
-    for i in 1..=2 {
+    let mut max_out=1;
+    if(pice.move_count==0){
+        max_out=2;
+    }
+    for i in 1..=max_out {
         let x_value = pice.pos.x + i * o;
 
         if x_value < 0 || x_value >= 8 {

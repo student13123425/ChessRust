@@ -45,7 +45,6 @@ impl Board {
     pub fn get_pice_side(&self,side:bool)->Vec<Pice>{
         let mut out=Vec::new();
         let mut values=&self.BlackPices;
-        // FIX: Removed the '!' so true selects White and false selects Black
         if side {
             values = &self.WhitePices;
         }
@@ -57,6 +56,9 @@ impl Board {
     pub fn get_board_state(&self) -> Vec<Vec<i32>> {
         let mut board = vec![vec![-1; 8]; 8];
         for pice in &self.WhitePices {
+            if pice.is_taken {
+                continue;
+            }
             let r = pice.pos.x as usize;
             let c = pice.pos.y as usize;
             if r < 8 && c < 8 {
@@ -64,6 +66,9 @@ impl Board {
             }
         }
         for pice in &self.BlackPices {
+            if pice.is_taken {
+                continue;
+            }
             let r = pice.pos.x as usize;
             let c = pice.pos.y as usize;
             if r < 8 && c < 8 {

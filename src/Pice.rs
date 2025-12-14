@@ -13,7 +13,8 @@ pub struct Pice {
     LineBuffer: Line2D,
     pub is_moving: bool,
     pub(crate) side: bool,
-    pub is_taken:bool
+    pub is_taken:bool,
+    pub move_count:i32
 }
 
 impl Pice {
@@ -25,7 +26,8 @@ impl Pice {
             LineBuffer: Line2D::new(Vec2D::new(0, 0), Vec2D::new(0, 0)),
             is_moving: false,
             side,
-            is_taken:false
+            is_taken:false,
+            move_count:0
         }
     }
 
@@ -50,6 +52,7 @@ impl Pice {
         self.is_moving=true;
         self.animation=0.0;
         self.LineBuffer=Line2D::new(Vec2D::new(self.pos.x,self.pos.y),end.clone());
+        self.move_count+=1;
     }
     pub fn compute_position(&self, positions: &Vec<Vec<Vec2D>>) -> Vec2D {
         let pos: Vec2D = positions[self.pos.x as usize][self.pos.y as usize];

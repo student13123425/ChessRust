@@ -80,11 +80,13 @@ impl Game {
         }
         let mut pice_id:i32=0;
         for p in pices{
-            let is_selected_pice=p.pos.compair(&start);
-            if is_selected_pice {
-                p.move_pice(&end);
-                pice_id=p.TextureID;
-                break;
+            if !p.is_taken {
+                let is_selected_pice = p.pos.compair(&start);
+                if is_selected_pice {
+                    p.move_pice(&end);
+                    pice_id = p.TextureID;
+                    break;
+                }
             }
         }
         self.side=!self.side;
@@ -93,7 +95,7 @@ impl Game {
             pices=&mut self.board.WhitePices;
         }
         for p in pices{
-            if p.pos.compair(&end) {
+            if !p.is_taken && p.pos.compair(&end) {
                 p.take();
                 break;
             }
@@ -101,28 +103,25 @@ impl Game {
         self.hystory.push(Move::from_pos(Vec2D::new(start.x,start.y),Vec2D::new(end.x,end.y),pice_id,self.side))
     }
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
-        let mut values=self.board.get_pice_side(self.side);
-        let mut data:Vec<Vec2D>=Vec::new();
-        for v in 0..(values).len(){
-            if !values[v].is_taken {
-                data.push(Vec2D::new(values[v].pos.x, values[v].pos.y))
-            }
-        }
+        let values = self.board.get_pice_side(self.side);
+
         let mouse_pos:Vec2D=Vec2D::new(d.get_mouse_x(),d.get_mouse_y());
         for i in 0..8{
             for j in 0..8{
                 let point=Vec2D::new(i,j);
                 let is_hover=self.click_rects[i as usize][j as usize].contains(mouse_pos);
                 let is_cliked=d.is_mouse_button_released(MOUSE_BUTTON_LEFT);
+
                 if is_cliked && is_hover {
                     let mut clicked_friendly = false;
-                    for k in 0..data.len(){
-                        if data[k].compair(&point) {
+                    for k in 0..values.len() {
+                        if !values[k].is_taken && values[k].pos.compair(&point) {
                             self.process_click(point, &values[k]);
                             clicked_friendly = true;
                             break;
                         }
                     }
+
                     if !clicked_friendly {
                         self.process_deselect();
                     }

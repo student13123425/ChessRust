@@ -1,6 +1,7 @@
 use raylib::drawing::RaylibDrawHandle;
 use crate::Aox::{get_board_draw_positions, Vec2D};
 use crate::Pice::Pice;
+use crate::PicePosibleMoves::PosibleMoves;
 use crate::TextureMap::TextureMap;
 
 pub struct Board {
@@ -67,8 +68,38 @@ impl Board {
                 board[r][c] = pice.TextureID + 8;
             }
         }
-
         return board
+    }
+    pub fn is_check(&self,)->i32{
+        let mut kings:Vec<Vec2D>=vec![];
+        for pice in &self.WhitePices{
+            if(pice.TextureID==0){
+                kings.push(Vec2D::new(pice.pos.x,pice.pos.y));
+            }
+        }
+        for pice in &self.BlackPices{
+            if(pice.TextureID==0){
+                kings.push(Vec2D::new(pice.pos.x,pice.pos.y));
+            }
+        }
+        let mut posbile_moves=PosibleMoves::new();
+        for pice in &self.WhitePices{
+            posbile_moves.compute_moves(pice,self);
+            for pos in &posbile_moves.moves{
+                if(kings[1].compair(&pos)){
+                    return 2;
+                }
+            }
+        }
+        for pice in &self.BlackPices{
+            posbile_moves.compute_moves(pice,self);
+            for pos in &posbile_moves.moves{
+                if(kings[0].compair(&pos)){
+                    return 1;
+                }
+            }
+        }
+        return 0;
     }
     pub fn render(&self,d:&mut RaylibDrawHandle,texture_map:&TextureMap){
         for pice in &self.WhitePices{

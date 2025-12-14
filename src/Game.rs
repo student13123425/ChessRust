@@ -35,8 +35,12 @@ impl Game {
         self.moves.render(d,&self.board.positions);
     }
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
+        if(self.board.get_is_pice_moving()){
+            self.process_deselect();
+        }
         self.moves.update(d);
         self.process_pice_select(d);
+        self.process_pice_start_move(d);
     }
     pub fn process_click(&mut self,point:Vec2D,pice: &Pice){
         self.selected_pice=Vec2D::new(point.x,point.y);
@@ -45,6 +49,9 @@ impl Game {
     pub fn process_deselect(&mut self){
         self.selected_pice=Vec2D::new(-1,-1);
         self.moves.clear();
+    }
+    pub fn process_pice_start_move(&mut self, d: &mut RaylibDrawHandle){
+        
     }
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let mut values=self.board.get_pice_side(self.side);

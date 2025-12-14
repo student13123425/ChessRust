@@ -49,7 +49,7 @@ pub fn draw_centered_texture(
     );
 }
 
-pub fn draw_rounded_rect_center(d: &mut RaylibDrawHandle,width:f32,height:f32,radius:f32,pos:Vec2D,color:Color){
-    let rect=Rectangle::new(pos.x as f32-(width/2.0),pos.y as f32-(height/2.0),width,height);
-    d.draw_rectangle_rounded(rect,radius,100,color);
+pub fn draw_rounded_rect_center(d: &mut RaylibDrawHandle, width: f32, height: f32, radius: f32, pos: Vec2D, color: Color, opacity: f32) {
+    let rect = Rectangle::new(pos.x as f32 - (width / 2.0), pos.y as f32 - (height / 2.0), width, height);
+    d.draw_rectangle_rounded(rect, radius, 100, color.fade(opacity));
 }

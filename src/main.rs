@@ -7,6 +7,7 @@ mod Move;
 mod PicePosibleMoves;
 mod Game;
 mod Rendering;
+mod PiceSelectMenu;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -24,5 +25,6 @@ fn main() {
         d.clear_background(Color::RAYWHITE);
         game.render(&mut d);
         game.update(&mut d);
+        d.draw_fps(10, 10);
     }
 }

@@ -377,7 +377,7 @@ impl PosibleMoves {
             let size = 100.0;
             let roundes = 0.2;
             let color = Color::new(255, 0, 0, (255.0 * self.opacity) as u8);
-            draw_rounded_rect_center(d, size, size, roundes, pos, color)
+            draw_rounded_rect_center(d, size, size, roundes, pos, color,1.0)
         }
     }
 

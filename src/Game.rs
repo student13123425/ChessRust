@@ -8,6 +8,7 @@ use crate::Board::Board;
 use crate::Move::Move;
 use crate::Pice::Pice;
 use crate::PicePosibleMoves::PosibleMoves;
+use crate::PiceSelectMenu::PiceSelectMenu;
 use crate::TextureMap::TextureMap;
 
 pub struct Game {
@@ -18,6 +19,7 @@ pub struct Game {
     pub click_rects:Vec<Vec<Rect2D>>,
     pub side:bool,
     pub hystory:Vec<Move>,
+    pub pice_select_menu:PiceSelectMenu
 }
 
 impl Game {
@@ -30,15 +32,53 @@ impl Game {
             click_rects:get_click_rect(0,0,1000),
             side:true,
             hystory:Vec::new(),
+            pice_select_menu:PiceSelectMenu::new()
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
         draw_background(d,0,0,1000);
         self.moves.render(d,&self.board.positions);
         self.board.render(d,&self.texture_map);
-
+        let is_select= self.get_is_to_select_transform();
+        if(is_select!=0) {
+            self.pice_select_menu.render(d,&self.texture_map,is_select==2);
+        }
+    }
+    pub fn get_is_to_select_transform(&self)->i32{
+        for p in self.board.WhitePices.iter(){
+            if(p.pos.x==0 && p.TextureID == 5){
+                return 1
+            }
+        }
+        for p in self.board.BlackPices.iter(){
+            if(p.pos.x==7 && p.TextureID == 5){
+                return 2
+            }
+        }
+        return 0;
+    }
+    pub fn process_pawn_select_pice(&mut self,side:bool,pice_id:i32){
+        let mut pices=&mut self.board.BlackPices;
+        if(!side){
+            pices=&mut self.board.WhitePices;
+        }
+        for p in pices{
+            if(p.TextureID==5&&(p.pos.x==7||p.pos.x==0)){
+                p.TextureID=pice_id;
+                return;
+            }
+        }
     }
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
+        let is_select= self.get_is_to_select_transform();
+        if(is_select!=0) {
+            let selected=self.pice_select_menu.update(d);
+            if(selected!=-1) {
+                self.process_pawn_select_pice(is_select==2,selected);
+            }else{
+                return
+            }
+        }
         self.board.update(d);
         self.moves.update(d);
         if self.board.get_is_pice_moving() {

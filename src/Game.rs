@@ -32,10 +32,11 @@ impl Game {
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
         draw_background(d,0,0,1000);
         self.board.render(d,&self.texture_map);
+        self.moves.render(d,&self.board.positions);
     }
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
         self.moves.update(d);
-        self.process_pice_select(d)
+        self.process_pice_select(d);
     }
     pub fn process_click(&mut self,point:Vec2D,pice: &Pice){
         self.selected_pice=Vec2D::new(point.x,point.y);

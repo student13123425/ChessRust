@@ -1,8 +1,10 @@
 use std::cmp::{max, min};
+use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use crate::Aox::{Rect2D, Vec2D};
 use crate::Board::Board;
 use crate::Pice::Pice;
+use crate::Rendering::draw_rounded_rect_center;
 
 fn get_id_side(id: i32) -> i32 {
     if id == -1 {
@@ -343,8 +345,13 @@ impl PosibleMoves {
             self.opacity = 1.0;
         }
     }
-    pub fn render(&mut self, d: &mut RaylibDrawHandle,click_rects:Vec<Vec<Rect2D>>){
-        
+    pub fn render(&mut self, d: &mut RaylibDrawHandle,positions:&Vec<Vec<Vec2D>>){
+        for move_pos in &self.moves {
+            let pos=positions[move_pos.x as usize][move_pos.y as usize];
+            let size=100.0;
+            let roundes=10.0;
+            draw_rounded_rect_center(d,size,size,roundes,pos,Color::RED)
+        }
     }
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         self.update_animation(d, d.get_frame_time());

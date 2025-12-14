@@ -2,12 +2,15 @@ use raylib::drawing::RaylibDraw;
 use raylib::prelude::{Color, RaylibDrawHandle, Rectangle, Texture2D, Vector2};
 use crate::Aox::Vec2D;
 
+use raylib::prelude::*;
+
 pub fn draw_centered_texture(
     d: &mut RaylibDrawHandle,
     texture: &Texture2D,
     center: Vec2D,
     s: i32,
     is_width: bool,
+    opacity: f64,
 ) {
     if center.is_null() {
         return;
@@ -42,7 +45,7 @@ pub fn draw_centered_texture(
         dest_rec,
         origin,
         0.0,
-        Color::WHITE,
+        Color::WHITE.fade(opacity as f32),
     );
 }
 

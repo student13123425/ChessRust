@@ -13,6 +13,7 @@ pub struct Pice {
     LineBuffer: Line2D,
     pub is_moving: bool,
     pub(crate) side: bool,
+    pub is_taken:bool
 }
 
 impl Pice {
@@ -24,17 +25,26 @@ impl Pice {
             LineBuffer: Line2D::new(Vec2D::new(0, 0), Vec2D::new(0, 0)),
             is_moving: false,
             side,
+            is_taken:false
         }
     }
 
     pub fn render(&self, rl: &mut RaylibDrawHandle, positions: &Vec<Vec<Vec2D>>, t: &TextureMap) {
         let pos = self.compute_position(positions);
         let height = 95;
-        if self.side {
-            draw_centered_texture(rl, &t.white_textures[self.TextureID as usize], pos, height, false);
-        } else {
-            draw_centered_texture(rl, &t.black_textures[self.TextureID as usize], pos, height, false);
+        let mut opacity =1.0;
+        if(self.is_taken){
+            opacity=self.animation;
         }
+        if self.side {
+            draw_centered_texture(rl, &t.white_textures[self.TextureID as usize], pos, height, false,opacity as f64);
+        } else {
+            draw_centered_texture(rl, &t.black_textures[self.TextureID as usize], pos, height, false,opacity as f64);
+        }
+    }
+    pub fn take(&mut self){
+        self.is_taken=true;
+        self.animation=1.0;;
     }
 
     pub fn compute_position(&self, positions: &Vec<Vec<Vec2D>>) -> Vec2D {
@@ -50,6 +60,13 @@ impl Pice {
     }
 
     pub fn update_animation(&mut self, rl: &mut RaylibDrawHandle) {
+        if(self.is_taken){
+            self.animation -= AnimationSpeed * rl.get_frame_time();
+            if self.animation <= 0.0 {
+                self.animation = 0.0;
+            }
+            return;
+        }
         if self.is_moving {
             self.animation += AnimationSpeed * rl.get_frame_time();
         }

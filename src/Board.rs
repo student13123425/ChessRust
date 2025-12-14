@@ -15,31 +15,25 @@ impl Board {
         let mut black_pices = Vec::new();
         let mut white_pices = Vec::new();
         let pos = get_board_draw_positions(0, 0, 1000);
-
         let back_rank_ids = [2, 4, 3, 1, 0, 3, 4, 2];
-
         for (col, &id) in back_rank_ids.iter().enumerate() {
             black_pices.push(Pice::new(Vec2D::new(0, col as i32), id, false));
         }
         for col in 0..8 {
             black_pices.push(Pice::new(Vec2D::new(1, col as i32), 5, false));
         }
-
         for (col, &id) in back_rank_ids.iter().enumerate() {
             white_pices.push(Pice::new(Vec2D::new(7, col as i32), id, true));
         }
-
         for col in 0..8 {
             white_pices.push(Pice::new(Vec2D::new(6, col as i32), 5, true));
         }
-
         Self {
             BlackPices: black_pices,
             WhitePices: white_pices,
             positions: pos,
         }
     }
-
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         for pice in &mut self.WhitePices {
             pice.update(d);
@@ -48,11 +42,11 @@ impl Board {
             pice.update(d);
         }
     }
-
     pub fn get_pice_side(&self,side:bool)->Vec<Pice>{
         let mut out=Vec::new();
         let mut values=&self.BlackPices;
-        if(!side) {
+        // FIX: Removed the '!' so true selects White and false selects Black
+        if side {
             values = &self.WhitePices;
         }
         for pice in values{
@@ -62,7 +56,6 @@ impl Board {
     }
     pub fn get_board_state(&self) -> Vec<Vec<i32>> {
         let mut board = vec![vec![-1; 8]; 8];
-
         for pice in &self.WhitePices {
             let r = pice.pos.x as usize;
             let c = pice.pos.y as usize;
@@ -70,7 +63,6 @@ impl Board {
                 board[r][c] = pice.TextureID;
             }
         }
-
         for pice in &self.BlackPices {
             let r = pice.pos.x as usize;
             let c = pice.pos.y as usize;
@@ -83,12 +75,12 @@ impl Board {
     pub fn is_check(&self,)->i32{
         let mut kings:Vec<Vec2D>=vec![];
         for pice in &self.WhitePices{
-            if(pice.TextureID==0){
+            if pice.TextureID==0 {
                 kings.push(Vec2D::new(pice.pos.x,pice.pos.y));
             }
         }
         for pice in &self.BlackPices{
-            if(pice.TextureID==0){
+            if pice.TextureID==0 {
                 kings.push(Vec2D::new(pice.pos.x,pice.pos.y));
             }
         }
@@ -96,7 +88,7 @@ impl Board {
         for pice in &self.WhitePices{
             posbile_moves.compute_moves(pice,self);
             for pos in &posbile_moves.moves{
-                if(kings[1].compair(&pos)){
+                if kings[1].compair(&pos) {
                     return 2;
                 }
             }
@@ -104,7 +96,7 @@ impl Board {
         for pice in &self.BlackPices{
             posbile_moves.compute_moves(pice,self);
             for pos in &posbile_moves.moves{
-                if(kings[0].compair(&pos)){
+                if kings[0].compair(&pos) {
                     return 1;
                 }
             }
@@ -121,12 +113,12 @@ impl Board {
     }
     pub fn get_is_pice_moving(&self)->bool{
         for pice in &self.WhitePices{
-            if(pice.is_moving) {
+            if pice.is_moving {
                 return true;
             }
         }
         for pice in &self.BlackPices{
-            if(pice.is_moving) {
+            if pice.is_moving {
                 return true;
             }
         }

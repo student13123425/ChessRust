@@ -3,7 +3,7 @@ use crate::Aox::{Line2D, Vec2D};
 use crate::Rendering::draw_centered_texture;
 use crate::TextureMap::TextureMap;
 
-const AnimationSpeed: f32 = 50.0;
+const AnimationSpeed: f32 = 4.0;
 
 #[derive(Clone)]
 pub struct Pice {
@@ -33,7 +33,7 @@ impl Pice {
         let pos = self.compute_position(positions);
         let height = 95;
         let mut opacity =1.0;
-        if(self.is_taken){
+        if self.is_taken {
             opacity=self.animation;
         }
         if self.side {
@@ -64,7 +64,7 @@ impl Pice {
     }
 
     pub fn update_animation(&mut self, rl: &mut RaylibDrawHandle) {
-        if(self.is_taken){
+        if self.is_taken {
             self.animation -= AnimationSpeed * rl.get_frame_time();
             if self.animation <= 0.0 {
                 self.animation = 0.0;

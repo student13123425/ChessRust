@@ -78,7 +78,7 @@ pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
 pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
-    if(pice.is_taken) {
+    if pice.is_taken {
         return out;
     }
     let pos = pice.pos;
@@ -161,7 +161,7 @@ pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
 pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
-    if(pice.is_taken) {
+    if pice.is_taken {
         return out;
     }
     let pos = pice.pos;
@@ -244,7 +244,7 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
 pub fn queen_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = bishop_moves(pice, board);
-    if(pice.is_taken) {
+    if pice.is_taken {
         return out;
     }
     out.append(&mut rook_moves(pice, board));
@@ -253,7 +253,7 @@ pub fn queen_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
 pub fn knight_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
-    if(pice.is_taken) {
+    if pice.is_taken {
         return out;
     }
     let pos = pice.pos;
@@ -287,7 +287,7 @@ pub fn knight_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
 pub fn king_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     let mut out: Vec<Vec2D> = vec![];
-    if(pice.is_taken) {
+    if pice.is_taken {
         return out;
     }
     let pos = pice.pos;

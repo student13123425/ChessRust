@@ -1,6 +1,6 @@
 use std::cmp::{max, min};
 use raylib::drawing::RaylibDrawHandle;
-use crate::Aox::Vec2D;
+use crate::Aox::{Rect2D, Vec2D};
 use crate::Board::Board;
 use crate::Pice::Pice;
 
@@ -343,7 +343,9 @@ impl PosibleMoves {
             self.opacity = 1.0;
         }
     }
-
+    pub fn render(&mut self, d: &mut RaylibDrawHandle,click_rects:Vec<Vec<Rect2D>>){
+        
+    }
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         self.update_animation(d, d.get_frame_time());
     }

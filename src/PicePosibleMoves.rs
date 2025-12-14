@@ -92,12 +92,12 @@ pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[0] {
             if pos.x - v_i32 >= 0 {
                 let v1 = get_id_side(board_state[(pos.x - v_i32) as usize][pos.y as usize]);
-                if v1 != side {
-                    if v1 != 0 {
-                        arr[0] = true;
-                    }
+                if v1 == 0 {
                     out.push(Vec2D::new(pos.x - v_i32, pos.y));
                 } else {
+                    if v1 == side {
+                        out.push(Vec2D::new(pos.x - v_i32, pos.y));
+                    }
                     arr[0] = true;
                 }
             } else {
@@ -108,12 +108,12 @@ pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[1] {
             if pos.x + v_i32 < 8 {
                 let v2 = get_id_side(board_state[(pos.x + v_i32) as usize][pos.y as usize]);
-                if v2 != side {
-                    if v2 != 0 {
-                        arr[1] = true;
-                    }
+                if v2 == 0 {
                     out.push(Vec2D::new(pos.x + v_i32, pos.y));
                 } else {
+                    if v2 == side {
+                        out.push(Vec2D::new(pos.x + v_i32, pos.y));
+                    }
                     arr[1] = true;
                 }
             } else {
@@ -124,12 +124,12 @@ pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[2] {
             if pos.y - v_i32 >= 0 {
                 let v3 = get_id_side(board_state[pos.x as usize][(pos.y - v_i32) as usize]);
-                if v3 != side {
-                    if v3 != 0 {
-                        arr[2] = true;
-                    }
+                if v3 == 0 {
                     out.push(Vec2D::new(pos.x, pos.y - v_i32));
                 } else {
+                    if v3 == side {
+                        out.push(Vec2D::new(pos.x, pos.y - v_i32));
+                    }
                     arr[2] = true;
                 }
             } else {
@@ -140,12 +140,12 @@ pub fn rook_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[3] {
             if pos.y + v_i32 < 8 {
                 let v4 = get_id_side(board_state[pos.x as usize][(pos.y + v_i32) as usize]);
-                if v4 != side {
-                    if v4 != 0 {
-                        arr[3] = true;
-                    }
+                if v4 == 0 {
                     out.push(Vec2D::new(pos.x, pos.y + v_i32));
                 } else {
+                    if v4 == side {
+                        out.push(Vec2D::new(pos.x, pos.y + v_i32));
+                    }
                     arr[3] = true;
                 }
             } else {
@@ -172,12 +172,12 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[0] {
             if pos.x - v_i32 >= 0 && pos.y - v_i32 >= 0 {
                 let v1 = get_id_side(board_state[(pos.x - v_i32) as usize][(pos.y - v_i32) as usize]);
-                if v1 != side {
-                    if v1 != 0 {
-                        arr[0] = true;
-                    }
+                if v1 == 0 {
                     out.push(Vec2D::new(pos.x - v_i32, pos.y - v_i32));
                 } else {
+                    if v1 == side {
+                        out.push(Vec2D::new(pos.x - v_i32, pos.y - v_i32));
+                    }
                     arr[0] = true;
                 }
             } else {
@@ -188,12 +188,12 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[1] {
             if pos.x - v_i32 >= 0 && pos.y + v_i32 < 8 {
                 let v2 = get_id_side(board_state[(pos.x - v_i32) as usize][(pos.y + v_i32) as usize]);
-                if v2 != side {
-                    if v2 != 0 {
-                        arr[1] = true;
-                    }
+                if v2 == 0 {
                     out.push(Vec2D::new(pos.x - v_i32, pos.y + v_i32));
                 } else {
+                    if v2 == side {
+                        out.push(Vec2D::new(pos.x - v_i32, pos.y + v_i32));
+                    }
                     arr[1] = true;
                 }
             } else {
@@ -204,12 +204,12 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[2] {
             if pos.x + v_i32 < 8 && pos.y - v_i32 >= 0 {
                 let v3 = get_id_side(board_state[(pos.x + v_i32) as usize][(pos.y - v_i32) as usize]);
-                if v3 != side {
-                    if v3 != 0 {
-                        arr[2] = true;
-                    }
+                if v3 == 0 {
                     out.push(Vec2D::new(pos.x + v_i32, pos.y - v_i32));
                 } else {
+                    if v3 == side {
+                        out.push(Vec2D::new(pos.x + v_i32, pos.y - v_i32));
+                    }
                     arr[2] = true;
                 }
             } else {
@@ -220,12 +220,12 @@ pub fn bishop_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         if !arr[3] {
             if pos.x + v_i32 < 8 && pos.y + v_i32 < 8 {
                 let v4 = get_id_side(board_state[(pos.x + v_i32) as usize][(pos.y + v_i32) as usize]);
-                if v4 != side {
-                    if v4 != 0 {
-                        arr[3] = true;
-                    }
+                if v4 == 0 {
                     out.push(Vec2D::new(pos.x + v_i32, pos.y + v_i32));
                 } else {
+                    if v4 == side {
+                        out.push(Vec2D::new(pos.x + v_i32, pos.y + v_i32));
+                    }
                     arr[3] = true;
                 }
             } else {
@@ -265,7 +265,7 @@ pub fn knight_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     for (x, y) in moves {
         if x >= 0 && x < 8 && y >= 0 && y < 8 {
             let v = get_id_side(board_state[x as usize][y as usize]);
-            if v != side {
+            if v == 0 || v == side {
                 out.push(Vec2D::new(x, y));
             }
         }
@@ -292,7 +292,7 @@ pub fn king_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
 
             if nx >= 0 && nx < 8 && ny >= 0 && ny < 8 {
                 let v = get_id_side(board_state[nx as usize][ny as usize]);
-                if v != side {
+                if v == 0 || v == side {
                     out.push(Vec2D::new(nx, ny));
                 }
             }
@@ -315,7 +315,8 @@ impl PosibleMoves {
     }
 
     pub fn compute_moves(&mut self, pice: &Pice, board: &Board) {
-        self.moves.clear();
+        self.clear();
+        self.opacity = 0.0;
         let calculated_moves = match pice.TextureID {
             0 => king_moves(pice, board),
             1 => queen_moves(pice, board),
@@ -334,10 +335,11 @@ impl PosibleMoves {
 
     fn update_animation(&mut self, _d: &mut RaylibDrawHandle, frame_time: f32) {
         let is_active = self.moves.len() > 0;
+        let speed=5.0;
         if is_active {
-            self.opacity += 15.0 * frame_time;
+            self.opacity += speed * frame_time;
         } else {
-            self.opacity -= 15.0 * frame_time;
+            self.opacity -= speed * frame_time;
         }
         if self.opacity < 0.0 {
             self.opacity = 0.0;
@@ -349,8 +351,9 @@ impl PosibleMoves {
         for move_pos in &self.moves {
             let pos=positions[move_pos.x as usize][move_pos.y as usize];
             let size=100.0;
-            let roundes=10.0;
-            draw_rounded_rect_center(d,size,size,roundes,pos,Color::RED)
+            let roundes=0.2;
+            let color=Color::new(255,0,0,(255.0*self.opacity) as u8);
+            draw_rounded_rect_center(d,size,size,roundes,pos,color)
         }
     }
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {

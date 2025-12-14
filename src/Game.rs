@@ -42,11 +42,15 @@ impl Game {
         self.selected_pice=Vec2D::new(point.x,point.y);
         self.moves.compute_moves(pice,&self.board);
     }
+    pub fn process_deselect(&mut self){
+        self.selected_pice=Vec2D::new(-1,-1);
+        self.moves.clear();
+    }
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let mut values=self.board.get_pice_side(self.side);
         let mut data:Vec<Vec2D>=Vec::new();
         for v in 0..(values).len(){
-            data.push(Vec2D::new(values[v].pos.x,values[v].pos.x))
+            data.push(Vec2D::new(values[v].pos.x,values[v].pos.y))
         }
         let mouse_pos:Vec2D=Vec2D::new(d.get_mouse_x(),d.get_mouse_y());
         for i in 0..8{
@@ -60,7 +64,9 @@ impl Game {
                             self.process_click(point,&values[i]);
                             return
                         }
+                        self.process_deselect()
                     }
+
                 }
             }
         }

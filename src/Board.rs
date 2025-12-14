@@ -41,7 +41,7 @@ impl Board {
     pub fn get_pice_side(&self,side:bool)->Vec<Pice>{
         let mut out=Vec::new();
         let mut values=&self.BlackPices;
-        if(side) {
+        if(!side) {
             values = &self.WhitePices;
         }
         for pice in values{

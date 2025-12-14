@@ -1,3 +1,4 @@
+use raylib::prelude::*;
 use crate::Aox::Vec2D;
 
 #[derive(Debug, Clone)]
@@ -48,5 +49,56 @@ impl Move {
         let col = ((pos.y + 97) as u8) as char;
         let row = 8 - pos.x;
         format!("{}{}", col, row)
+    }
+
+
+}
+pub fn render_history(d: &mut RaylibDrawHandle, history: &Vec<Move>) {
+    let font_size = 20;
+    let padding = 10;
+    let area_start_y = 1000;
+    let area_height = 100;
+    let text_y = area_start_y + (area_height - font_size) / 2;
+    let spacing = 15; // Space between move groups
+    let mut current_x = 1000 - padding;
+    let mut i = (history.len() as i32) - 1;
+
+    while i >= 0 {
+        let text_to_draw;
+        let step;
+
+        if i % 2 != 0 {
+            let white_move = &history[(i - 1) as usize];
+            let black_move = &history[i as usize];
+            let move_num = ((i - 1) / 2) + 1;
+
+            text_to_draw = format!("{}. {}{} {}{}",
+                                   move_num,
+                                   white_move.start_sq, white_move.end_sq,
+                                   black_move.start_sq, black_move.end_sq
+            );
+            step = 2;
+        } else {
+            let white_move = &history[i as usize];
+            let move_num = (i / 2) + 1;
+
+            text_to_draw = format!("{}. {}{}",
+                                   move_num,
+                                   white_move.start_sq, white_move.end_sq
+            );
+            step = 1;
+        }
+
+        let text_width = d.measure_text(&text_to_draw, font_size);
+
+        if current_x - text_width < padding {
+            break; 
+        }
+
+        current_x -= text_width;
+
+        d.draw_text(&text_to_draw, current_x, text_y, font_size, Color::BLACK);
+        current_x -= spacing;
+        i -= step;
     }
 }

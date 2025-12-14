@@ -5,7 +5,7 @@ use raylib::ffi::MouseButton::MOUSE_BUTTON_LEFT;
 use crate::Aox::{get_click_rect, Rect2D, Vec2D};
 use crate::Background::draw_background;
 use crate::Board::Board;
-use crate::Move::Move;
+use crate::Move::{render_history, Move};
 use crate::Pice::Pice;
 use crate::PicePosibleMoves::PosibleMoves;
 use crate::PiceSelectMenu::PiceSelectMenu;
@@ -43,6 +43,7 @@ impl Game {
         if(is_select!=0) {
             self.pice_select_menu.render(d,&self.texture_map,is_select==2);
         }
+        render_history(d,&self.hystory);
     }
     pub fn get_is_to_select_transform(&self)->i32{
         for p in self.board.WhitePices.iter(){

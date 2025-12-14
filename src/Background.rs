@@ -20,31 +20,6 @@ pub fn draw_chess_board(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, bo
     }
 }
 
-
-
-fn draw_chess_notation(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32) {
-    let tile_size = board_size / 8;
-    let font_size = 20;
-    let text_color = Color::BLACK;
-
-    for i in 0..8 {
-        let rank_num = 8 - i;
-        let rank_str = format!("{}", rank_num);
-        let rank_x = start_x - 25;
-        let rank_y = start_y + (i * tile_size) + (tile_size / 2) - 10;
-
-        d.draw_text(&rank_str, rank_x, rank_y, font_size, text_color);
-
-        let file_char = (b'A' + i as u8) as char;
-        let file_str = format!("{}", file_char);
-        let file_x = start_x + (i * tile_size) + (tile_size / 2) - 5;
-        let file_y = start_y + board_size + 10;
-
-        d.draw_text(&file_str, file_x, file_y, font_size, text_color);
-    }
-}
-
 pub fn draw_background(d: &mut RaylibDrawHandle, start_x: i32, start_y: i32, board_size: i32){
-    draw_chess_notation(d, start_x, start_y, board_size);
     draw_chess_board(d, start_x, start_y, board_size);
 }

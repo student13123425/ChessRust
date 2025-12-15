@@ -265,6 +265,17 @@ impl Board {
         }
         return false;
     }
+    pub fn to_string(&self) -> String {
+        let mut out:String="".to_string();
+        let state=self.get_board_state();
+        for i in 0..8{
+            for j in 0..8{
+                let v=state[i][j];
+                out.push(v.to_string().chars().nth(0).unwrap());
+            }
+        }
+        return out
+    }
     pub fn execute_move(&mut self, move_obj: &Move) ->bool{
         if move_obj.is_castling {
             self.execute_castle_move(move_obj);

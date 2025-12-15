@@ -192,11 +192,24 @@ impl Board {
         }
         return false;
     }
-
-    pub fn execute_move(&mut self, move_obj: &Move) {
+    pub fn get_value_at_point(&self, point: Vec2D) -> i32 {
+        let board_state = self.get_board_state();
+        let rows = board_state.len();
+        if rows == 0 {
+            return -1;
+        }
+        let cols = board_state[0].len();
+        let x = point.x;
+        let y = point.y;
+        if x < 0 || y < 0 || (y as usize) >= rows || (x as usize) >= cols {
+            return -1;
+        }
+        return board_state[y as usize][x as usize];
+    }
+    pub fn execute_move(&mut self, move_obj: &Move) ->bool{
         if move_obj.is_castling {
             self.execute_castle_move(move_obj);
-            return;
+            return false;
         }
 
         let start = move_obj.get_start_pos();
@@ -219,10 +232,11 @@ impl Board {
             for p in opponent_pices {
                 if !p.is_taken && p.pos.compair(&end) {
                     p.take();
-                    break;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     fn execute_castle_move(&mut self, move_obj: &Move) {

@@ -19,7 +19,8 @@ pub struct Game {
     pub click_rects:Vec<Vec<Rect2D>>,
     pub side:bool,
     pub hystory:Vec<Move>,
-    pub pice_select_menu:PiceSelectMenu
+    pub pice_select_menu:PiceSelectMenu,
+    pub moveing_pice_buffer:i32
 }
 
 impl Game {
@@ -32,7 +33,8 @@ impl Game {
             click_rects:get_click_rect(0,0,1000),
             side:true,
             hystory:Vec::new(),
-            pice_select_menu:PiceSelectMenu::new()
+            pice_select_menu:PiceSelectMenu::new(),
+            moveing_pice_buffer:0
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
@@ -109,14 +111,20 @@ impl Game {
         }
         return false;
     }
-
-    pub fn process_move(&mut self, move_obj: Move){
-        self.board.execute_move(&move_obj);
-
-        if move_obj.is_castling {
-            return;
+    pub fn get_if_draw(&mut self)->bool{
+        if(self.moveing_pice_buffer>100){
+            return true
         }
-
+        return false
+    }
+    pub fn process_move(&mut self, move_obj: Move){
+        let value_at_point=self.board.get_value_at_point(move_obj.get_start_pos());
+        let is_pawn=value_at_point==5||value_at_point==13;
+        let is_take=self.board.execute_move(&move_obj);
+        self.moveing_pice_buffer+=1;
+        if(is_take||is_pawn){
+            self.moveing_pice_buffer=0;
+        }
         self.side = !self.side;
         self.hystory.push(move_obj);
     }

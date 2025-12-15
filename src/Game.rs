@@ -2,7 +2,7 @@ use std::thread::Thread;
 use raylib::drawing::RaylibDrawHandle;
 use raylib::{RaylibHandle, RaylibThread};
 use raylib::ffi::MouseButton::MOUSE_BUTTON_LEFT;
-use crate::Aox::{get_click_rect, Rect2D, Vec2D};
+use crate::Aox::{get_click_rect, get_string_repeted_count, Rect2D, Vec2D};
 use crate::Background::draw_background;
 use crate::Board::Board;
 use crate::Move::{render_history, Move};
@@ -20,7 +20,8 @@ pub struct Game {
     pub side:bool,
     pub hystory:Vec<Move>,
     pub pice_select_menu:PiceSelectMenu,
-    pub moveing_pice_buffer:i32
+    pub moveing_pice_buffer:i32,
+    pub hystory_of_state:Vec<String>
 }
 
 impl Game {
@@ -34,7 +35,8 @@ impl Game {
             side:true,
             hystory:Vec::new(),
             pice_select_menu:PiceSelectMenu::new(),
-            moveing_pice_buffer:0
+            moveing_pice_buffer:0,
+            hystory_of_state:Vec::new()
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
@@ -112,7 +114,7 @@ impl Game {
         return false;
     }
     pub fn get_if_draw(&mut self)->bool{
-        if(self.moveing_pice_buffer>100||self.board.get_if_low_material()){
+        if(self.moveing_pice_buffer>100||self.board.get_if_low_material()||get_string_repeted_count(&self.hystory_of_state)>=3){
             return true
         }
         return false
@@ -120,6 +122,7 @@ impl Game {
     pub fn process_move(&mut self, move_obj: Move){
         let value_at_point=self.board.get_value_at_point(move_obj.get_start_pos());
         let is_pawn=value_at_point==5||value_at_point==13;
+        self.hystory_of_state.push(self.board.to_string(self.side));
         let is_take=self.board.execute_move(&move_obj);
         self.moveing_pice_buffer+=1;
         if(is_take||is_pawn){

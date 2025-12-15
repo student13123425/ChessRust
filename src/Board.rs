@@ -265,7 +265,7 @@ impl Board {
         }
         return false;
     }
-    pub fn to_string(&self) -> String {
+    pub fn to_string(&self,side:bool) -> String {
         let mut out:String="".to_string();
         let state=self.get_board_state();
         for i in 0..8{
@@ -273,6 +273,11 @@ impl Board {
                 let v=state[i][j];
                 out.push(v.to_string().chars().nth(0).unwrap());
             }
+        }
+        if(side){
+            out.push('t');
+        }else{
+            out.push('f');
         }
         return out
     }

@@ -118,7 +118,37 @@ impl Game {
         }
         return false;
     }
+    pub fn process_castle_move(&mut self, move_obj: Move){
+        let mut side_y=7;
+        let mut pices=&mut self.board.WhitePices;
+        if(self.side==true) {
+            side_y=0;
+            pices=&mut self.board.BlackPices;
+        }
+        let rook_new=vec![3,5];
+        let king_new=vec![2,6];
+        let mut king_pos_new=Vec2D::new(king_new[0],side_y);
+        let mut rook_pos_new=Vec2D::new(rook_new[0],side_y);
+        let mut rook_old:Vec2D=Vec2D::new(0,side_y);
+        let king_old:Vec2D=Vec2D::new(4,side_y);
+        if(move_obj.get_end_pos().y==king_new[1]){
+            king_pos_new.x=king_new[1];
+            rook_pos_new.x=rook_new[1];
+            rook_old.x=7;
+        }
+        for p in pices{
+            if(p.pos.compair(&king_old)&&p.TextureID==0){
+                p.move_pice(&king_pos_new);
+            }else if(p.pos.compair(&rook_old)&&p.TextureID==2){
+                p.move_pice(&rook_pos_new);
+            }
+        }
+    }
     pub fn process_move(&mut self, move_obj: Move){
+        if(move_obj.is_castling){
+            self.process_castle_move(move_obj);
+            return;
+        }
         let start = move_obj.get_start_pos();
         let end = move_obj.get_end_pos();
 
@@ -168,7 +198,6 @@ impl Game {
 
         self.hystory.push(move_obj);
     }
-
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let values = self.board.get_pice_side(self.side);
 

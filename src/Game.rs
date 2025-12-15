@@ -66,6 +66,7 @@ impl Game {
         for p in pices{
             if p.TextureID==5 && (p.pos.x==7||p.pos.x==0) {
                 p.TextureID=pice_id;
+                self.hystory.push(Move::transform_pawn_move(self.selected_pice,pice_id,side));
                 return;
             }
         }

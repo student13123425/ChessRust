@@ -8,6 +8,7 @@ pub struct Move {
     pub piece_id: i32,
     pub side: bool,
     pub is_castling: bool,
+    pub transform_pawn:i32
 }
 
 impl Move {
@@ -18,6 +19,7 @@ impl Move {
             piece_id,
             side,
             is_castling,
+            transform_pawn:-1
         }
     }
 
@@ -30,9 +32,21 @@ impl Move {
             piece_id,
             side,
             is_castling,
+            transform_pawn:-1
         }
     }
-
+    pub fn transform_pawn_move(pos:Vec2D,new_value:i32,side:bool)->Self{
+        let start_sq=Self::format_square(pos);
+        let end_sq=Self::format_square(pos);
+        return Self{
+            transform_pawn:new_value,
+            start_sq,
+            end_sq,
+            piece_id:5,
+            side:side,
+            is_castling:false
+        }
+    }
     pub fn to_string(&self) -> String {
         if self.is_castling {
             if self.end_sq.starts_with('g') {
@@ -41,7 +55,21 @@ impl Move {
                 return "O-O-O".to_string();
             }
         }
-        format!("{}{}", self.start_sq, self.end_sq)
+
+        let mut move_str = format!("{}{}", self.start_sq, self.end_sq);
+
+        if self.transform_pawn != -1 {
+            let promo_char = match self.transform_pawn {
+                1 => "q",
+                2 => "r",
+                3 => "b",
+                4 => "n",
+                _ => "q",
+            };
+            move_str.push_str(promo_char);
+        }
+
+        move_str
     }
 
     pub fn get_start_pos(&self) -> Vec2D {

@@ -84,7 +84,7 @@ impl Game {
     }
     pub fn process_click(&mut self,point:Vec2D,pice: &Pice){
         self.selected_pice=Vec2D::new(point.x,point.y);
-        self.moves.compute_moves(pice,&self.board);
+        self.moves.compute_moves(pice,&self.board,true);
     }
     pub fn process_deselect(&mut self){
         self.selected_pice=Vec2D::new(-1,-1);

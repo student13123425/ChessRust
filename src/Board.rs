@@ -108,23 +108,21 @@ impl Board {
         }
         return board
     }
-    pub fn is_check_mate(&self,side:bool)->i32{
-        let is_check=self.is_check();
-        if(is_check==0){
-            return 0;
+    pub fn is_checkmate_or_stale_mate(&self, side: bool) -> i32 {
+        let is_check = self.is_check();
+        let mut pices = &self.WhitePices;
+        if !side {
+            pices = &self.BlackPices;
         }
-        let mut pices=&self.WhitePices;
-        if(is_check==2){
-            pices=&self.BlackPices;
-        }
-        let mut moves=PosibleMoves::new();
-        for pice in pices{
-            moves.compute_moves(pice,&self);
-            for m in &moves.moves{
-                let side=m.side;
-                let is_check_local=self.is_move_resoult_in_check(m,side);
-                if(!is_check_local){
-                    return 0;
+
+        let mut moves = PosibleMoves::new();
+        for pice in pices {
+            moves.compute_moves(pice, &self, true);
+            for m in &moves.moves {
+                let side = m.side;
+                let is_check_local = self.is_move_resoult_in_check(m, side);
+                if !is_check_local {
+                    return -1;
                 }
             }
         }
@@ -156,7 +154,7 @@ impl Board {
         }
         let mut posbile_moves=PosibleMoves::new();
         for pice in &self.WhitePices{
-            posbile_moves.compute_moves(pice,self);
+            posbile_moves.compute_moves(pice,self,true);
             for pos in &posbile_moves.moves{
                 if kings[1].compair(&pos.get_end_pos()) {
                     return 2;
@@ -164,7 +162,7 @@ impl Board {
             }
         }
         for pice in &self.BlackPices{
-            posbile_moves.compute_moves(pice,self);
+            posbile_moves.compute_moves(pice,self,true);
             for pos in &posbile_moves.moves{
                 if kings[0].compair(&pos.get_end_pos()) {
                     return 1;

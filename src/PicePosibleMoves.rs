@@ -421,7 +421,7 @@ impl PosibleMoves {
         }
     }
 
-    pub fn compute_moves(&mut self, pice: &Pice, board: &Board) {
+    pub fn compute_moves(&mut self, pice: &Pice, board: &Board, check_safety: bool) {
         self.clear();
         self.opacity = 0.0;
         let calculated_moves = match pice.TextureID {
@@ -433,18 +433,31 @@ impl PosibleMoves {
             5 => pawn_move(pice, board),
             _ => vec![],
         };
-
+        let side = pice.side;
         self.moves = Vec::new();
         for m in calculated_moves {
-            let move_item=Move::from_pos(pice.pos.clone(),m.clone(),pice.TextureID,pice.side,false);
-            self.moves.push(move_item);
+            let move_item = Move::from_pos(pice.pos.clone(), m.clone(), pice.TextureID, pice.side, false);
+            if check_safety {
+                if !board.is_move_resoult_in_check(&move_item, side) {
+                    self.moves.push(move_item);
+                }
+            } else {
+                self.moves.push(move_item);
+            }
         }
 
         if pice.TextureID == 0 {
             let casteling_move = get_casteling_moves(pice, board);
             for m in &casteling_move {
                 let move_item = Move::from_pos(pice.pos.clone(), m.clone(), pice.TextureID, pice.side, true);
-                self.moves.push(move_item);
+
+                if check_safety {
+                    if !board.is_move_resoult_in_check(&move_item, side) {
+                        self.moves.push(move_item);
+                    }
+                } else {
+                    self.moves.push(move_item);
+                }
             }
         }
     }

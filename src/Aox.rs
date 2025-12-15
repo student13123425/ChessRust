@@ -90,3 +90,26 @@ pub fn get_click_rect(start_x: i32, start_y: i32, board_size: i32) -> Vec<Vec<Re
     }
     out
 }
+
+pub fn swap_on_matrix(input: &mut Vec<Vec<i32>>, p1: Vec2D, p2: Vec2D) {
+    if p1.x < 0 || p2.x < 0 || p1.y < 0 || p2.y < 0 {
+        return;
+    }
+
+    let p1_x = p1.x as usize;
+    let p1_y = p1.y as usize;
+    let p2_x = p2.x as usize;
+    let p2_y = p2.y as usize;
+
+    if p1_x >= input.len() || p2_x >= input.len() {
+        return;
+    }
+
+    if p1_y >= input[p1_x].len() || p2_y >= input[p2_x].len() {
+        return;
+    }
+
+    let v = input[p1_x][p1_y];
+    input[p1_x][p1_y] = input[p2_x][p2_y];
+    input[p2_x][p2_y] = v;
+}

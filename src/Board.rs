@@ -34,6 +34,35 @@ impl Board {
             positions: pos,
         }
     }
+
+    pub fn from_state(state: Vec<Vec<i32>>) -> Board {
+        let mut black_pices = Vec::new();
+        let mut white_pices = Vec::new();
+        let pos = get_board_draw_positions(0, 0, 1000);
+
+        for (r, row) in state.iter().enumerate() {
+            for (c, &id) in row.iter().enumerate() {
+                if id == -1 {
+                    continue;
+                }
+
+                let position = Vec2D::new(r as i32, c as i32);
+
+                if id < 8 {
+                    white_pices.push(Pice::new(position, id, true));
+                } else {
+                    black_pices.push(Pice::new(position, id - 8, false));
+                }
+            }
+        }
+
+        Self {
+            BlackPices: black_pices,
+            WhitePices: white_pices,
+            positions: pos,
+        }
+    }
+
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         for pice in &mut self.WhitePices {
             pice.update(d);
@@ -76,6 +105,22 @@ impl Board {
             }
         }
         return board
+    }
+    pub fn is_checK_mate(&self)->bool{
+        let is_check=self.is_check();
+        if(is_check==0){
+            return false;
+        }
+        let mut oposite_pices=&self.BlackPices;
+        if(is_check==2){
+            oposite_pices=&self.WhitePices;
+        }
+
+        let mut moves=PosibleMoves::new();
+        for pice in oposite_pices{
+            //todo
+        }
+        return false;
     }
     pub fn is_check(&self,)->i32{
         let mut kings:Vec<Vec2D>=vec![];

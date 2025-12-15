@@ -93,7 +93,7 @@ impl Board {
         for pice in &self.WhitePices{
             posbile_moves.compute_moves(pice,self);
             for pos in &posbile_moves.moves{
-                if kings[1].compair(&pos) {
+                if kings[1].compair(&pos.get_end_pos()) {
                     return 2;
                 }
             }
@@ -101,7 +101,7 @@ impl Board {
         for pice in &self.BlackPices{
             posbile_moves.compute_moves(pice,self);
             for pos in &posbile_moves.moves{
-                if kings[0].compair(&pos) {
+                if kings[0].compair(&pos.get_end_pos()) {
                     return 1;
                 }
             }

@@ -7,19 +7,21 @@ pub struct Move {
     pub end_sq: String,
     pub piece_id: i32,
     pub side: bool,
+    pub is_castling: bool,
 }
 
 impl Move {
-    pub fn new(start: String, end: String, piece_id: i32, side: bool) -> Self {
+    pub fn new(start: String, end: String, piece_id: i32, side: bool, is_castling: bool) -> Self {
         Self {
             start_sq: start,
             end_sq: end,
             piece_id,
             side,
+            is_castling,
         }
     }
 
-    pub fn from_pos(start: Vec2D, end: Vec2D, piece_id: i32, side: bool) -> Self {
+    pub fn from_pos(start: Vec2D, end: Vec2D, piece_id: i32, side: bool, is_castling: bool) -> Self {
         let start_sq = Self::format_square(start);
         let end_sq = Self::format_square(end);
         Self {
@@ -27,7 +29,19 @@ impl Move {
             end_sq,
             piece_id,
             side,
+            is_castling,
         }
+    }
+
+    pub fn to_string(&self) -> String {
+        if self.is_castling {
+            if self.end_sq.starts_with('g') {
+                return "O-O".to_string();
+            } else if self.end_sq.starts_with('c') {
+                return "O-O-O".to_string();
+            }
+        }
+        format!("{}{}", self.start_sq, self.end_sq)
     }
 
     pub fn get_start_pos(&self) -> Vec2D {
@@ -50,9 +64,8 @@ impl Move {
         let row = 8 - pos.x;
         format!("{}{}", col, row)
     }
-
-
 }
+
 pub fn render_history(d: &mut RaylibDrawHandle, history: &Vec<Move>) {
     let font_size = 20;
     let padding = 10;

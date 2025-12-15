@@ -40,19 +40,19 @@ impl Game {
         self.moves.render(d,&self.board.positions);
         self.board.render(d,&self.texture_map);
         let is_select= self.get_is_to_select_transform();
-        if(is_select!=0) {
+        if is_select != 0 {
             self.pice_select_menu.render(d,&self.texture_map,is_select==2);
         }
         render_history(d,&self.hystory);
     }
     pub fn get_is_to_select_transform(&self)->i32{
         for p in self.board.WhitePices.iter(){
-            if(p.pos.x==0 && p.TextureID == 5){
+            if p.pos.x==0 && p.TextureID == 5 {
                 return 1
             }
         }
         for p in self.board.BlackPices.iter(){
-            if(p.pos.x==7 && p.TextureID == 5){
+            if p.pos.x==7 && p.TextureID == 5 {
                 return 2
             }
         }
@@ -60,11 +60,11 @@ impl Game {
     }
     pub fn process_pawn_select_pice(&mut self,side:bool,pice_id:i32){
         let mut pices=&mut self.board.BlackPices;
-        if(!side){
+        if !side {
             pices=&mut self.board.WhitePices;
         }
         for p in pices{
-            if(p.TextureID==5&&(p.pos.x==7||p.pos.x==0)){
+            if p.TextureID==5 && (p.pos.x==7||p.pos.x==0) {
                 p.TextureID=pice_id;
                 return;
             }
@@ -72,9 +72,9 @@ impl Game {
     }
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
         let is_select= self.get_is_to_select_transform();
-        if(is_select!=0) {
+        if is_select!=0 {
             let selected=self.pice_select_menu.update(d);
-            if(selected!=-1) {
+            if selected!=-1 {
                 self.process_pawn_select_pice(is_select==2,selected);
             }else{
                 return
@@ -101,48 +101,73 @@ impl Game {
     pub fn process_pice_start_move(&mut self, d: &mut RaylibDrawHandle) -> bool {
         let mouse_pos:Vec2D=Vec2D::new(d.get_mouse_x(),d.get_mouse_y());
         for i in 0..self.moves.moves.len(){
-            let pos=&self.moves.moves[i];
-            let rect:&Rect2D=&self.click_rects[pos.x as usize][pos.y as usize];
-            let is_hover=rect.contains(mouse_pos);
-            let is_cliked=d.is_mouse_button_released(MOUSE_BUTTON_LEFT);
-            if is_hover && is_cliked {
-                self.process_move(pos.clone());
-                self.process_deselect();
-                return true;
+            let move_obj = &self.moves.moves[i];
+            let target_pos = move_obj.get_end_pos();
+
+            if target_pos.x >= 0 && target_pos.x < 8 && target_pos.y >= 0 && target_pos.y < 8 {
+                let rect:&Rect2D=&self.click_rects[target_pos.x as usize][target_pos.y as usize];
+                let is_hover=rect.contains(mouse_pos);
+                let is_cliked=d.is_mouse_button_released(MOUSE_BUTTON_LEFT);
+                if is_hover && is_cliked {
+                    self.process_move(move_obj.clone());
+                    self.process_deselect();
+                    return true;
+                }
             }
         }
         return false;
     }
-    pub fn process_move(&mut self,end:Vec2D){
-        let start=self.selected_pice;
-        let mut pices=&mut self.board.BlackPices;
-        if self.side {
-            pices=&mut self.board.WhitePices;
-        }
-        let mut pice_id:i32=0;
-        for p in pices{
+    pub fn process_move(&mut self, move_obj: Move){
+        let start = move_obj.get_start_pos();
+        let end = move_obj.get_end_pos();
+
+        let mut pices = if self.side { &mut self.board.WhitePices } else { &mut self.board.BlackPices };
+
+        for p in pices.iter_mut(){
             if !p.is_taken {
                 let is_selected_pice = p.pos.compair(&start);
                 if is_selected_pice {
                     p.move_pice(&end);
-                    pice_id = p.TextureID;
                     break;
                 }
             }
         }
-        self.side=!self.side;
-        pices=&mut self.board.BlackPices;
-        if self.side {
-            pices=&mut self.board.WhitePices;
-        }
-        for p in pices{
-            if !p.is_taken && p.pos.compair(&end) {
-                p.take();
-                break;
+
+        if move_obj.is_castling {
+            let pices = if self.side { &mut self.board.WhitePices } else { &mut self.board.BlackPices };
+            let row = start.x;
+            let (rook_start_y, rook_end_y) = if end.y == 6 {
+                (7, 5)
+            } else {
+                (0, 3)
+            };
+
+            let rook_start = Vec2D::new(row, rook_start_y);
+            let rook_end = Vec2D::new(row, rook_end_y);
+
+            for p in pices {
+                if !p.is_taken && p.TextureID == 2 && p.pos.compair(&rook_start) {
+                    p.move_pice(&rook_end);
+                    break;
+                }
             }
         }
-        self.hystory.push(Move::from_pos(Vec2D::new(start.x,start.y),Vec2D::new(end.x,end.y),pice_id,self.side))
+
+        self.side = !self.side;
+
+        if !move_obj.is_castling {
+            let pices = if self.side { &mut self.board.WhitePices } else { &mut self.board.BlackPices };
+            for p in pices{
+                if !p.is_taken && p.pos.compair(&end) {
+                    p.take();
+                    break;
+                }
+            }
+        }
+
+        self.hystory.push(move_obj);
     }
+
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let values = self.board.get_pice_side(self.side);
 

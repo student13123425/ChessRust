@@ -3,6 +3,7 @@ use raylib::color::Color;
 use raylib::drawing::RaylibDrawHandle;
 use crate::Aox::{Rect2D, Vec2D};
 use crate::Board::Board;
+use crate::Move::Move;
 use crate::Pice::Pice;
 use crate::Rendering::draw_rounded_rect_center;
 
@@ -54,7 +55,7 @@ pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
         out.push(Vec2D::new(front_x, pice.pos.y + 1))
     }
     let mut max_out=1;
-    if(pice.move_count==0){
+    if pice.move_count==0 {
         max_out=2;
     }
     for i in 1..=max_out {
@@ -323,9 +324,92 @@ pub fn king_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
     out
 }
 
+pub fn get_casteling_moves(pice: &Pice, board: &Board) -> Vec<Vec2D> {
+    let mut out: Vec<Vec2D> = Vec::new();
+    let row_x = if pice.side { 7 } else { 0 };
+    if pice.TextureID != 0 || pice.move_count > 0 || pice.is_taken || pice.pos.x != row_x || pice.pos.y != 4 {
+        return out;
+    }
+    let my_pieces = if pice.side { &board.WhitePices } else { &board.BlackPices };
+
+    let mut can_castle_short = false;
+    let mut can_castle_long = false;
+    for p in my_pieces {
+        if p.TextureID == 2 && p.move_count == 0 && !p.is_taken && p.pos.x == row_x {
+            if p.pos.y == 7 { can_castle_short = true; }
+            if p.pos.y == 0 { can_castle_long = true; }
+        }
+    }
+    let board_state = board.get_board_state();
+    if can_castle_short {
+        if board_state[row_x as usize][5] != -1 || board_state[row_x as usize][6] != -1 {
+            can_castle_short = false;
+        }
+    }
+    if can_castle_long {
+        if board_state[row_x as usize][1] != -1 || board_state[row_x as usize][2] != -1 || board_state[row_x as usize][3] != -1 {
+            can_castle_long = false;
+        }
+    }
+    if can_castle_short || can_castle_long {
+        let opponent_pieces = if pice.side { &board.BlackPices } else { &board.WhitePices };
+        let mut attacked_squares = vec![vec![false; 8]; 8];
+
+        for p in opponent_pieces {
+            if p.is_taken { continue; }
+
+            if p.TextureID == 5 {
+                let direction = if p.side { -1 } else { 1 };
+                let attack_x = p.pos.x + direction;
+                if attack_x >= 0 && attack_x < 8 {
+                    if p.pos.y - 1 >= 0 { attacked_squares[attack_x as usize][(p.pos.y - 1) as usize] = true; }
+                    if p.pos.y + 1 < 8 { attacked_squares[attack_x as usize][(p.pos.y + 1) as usize] = true; }
+                }
+            } else {
+                let basic_moves = match p.TextureID {
+                    0 => king_moves(p, board),
+                    1 => queen_moves(p, board),
+                    2 => rook_moves(p, board),
+                    3 => bishop_moves(p, board),
+                    4 => knight_moves(p, board),
+                    _ => vec![],
+                };
+                for m in basic_moves {
+                    attacked_squares[m.x as usize][m.y as usize] = true;
+                }
+            }
+        }
+
+        if attacked_squares[row_x as usize][4] {
+            can_castle_short = false;
+            can_castle_long = false;
+        }
+
+        if can_castle_short {
+            if attacked_squares[row_x as usize][5] || attacked_squares[row_x as usize][6] {
+                can_castle_short = false;
+            }
+        }
+        if can_castle_long {
+            if attacked_squares[row_x as usize][3] || attacked_squares[row_x as usize][2] {
+                can_castle_long = false;
+            }
+        }
+    }
+
+    if can_castle_short {
+        out.push(Vec2D::new(row_x, 6));
+    }
+    if can_castle_long {
+        out.push(Vec2D::new(row_x, 2));
+    }
+
+    out
+}
+
 #[derive(Clone)]
 pub struct PosibleMoves {
-    pub moves: Vec<Vec2D>,
+    pub moves: Vec<Move>,
     pub opacity: f32,
 }
 
@@ -349,7 +433,20 @@ impl PosibleMoves {
             5 => pawn_move(pice, board),
             _ => vec![],
         };
-        self.moves = calculated_moves;
+
+        self.moves = Vec::new();
+        for m in calculated_moves {
+            let move_item=Move::from_pos(pice.pos.clone(),m.clone(),pice.TextureID,pice.side,false);
+            self.moves.push(move_item);
+        }
+
+        if pice.TextureID == 0 {
+            let casteling_move = get_casteling_moves(pice, board);
+            for m in &casteling_move {
+                let move_item = Move::from_pos(pice.pos.clone(), m.clone(), pice.TextureID, pice.side, true);
+                self.moves.push(move_item);
+            }
+        }
     }
 
     pub fn clear(&mut self) {
@@ -373,7 +470,8 @@ impl PosibleMoves {
 
     pub fn render(&mut self, d: &mut RaylibDrawHandle, positions: &Vec<Vec<Vec2D>>) {
         for move_pos in &self.moves {
-            let pos = positions[move_pos.x as usize][move_pos.y as usize];
+            let end = move_pos.get_end_pos();
+            let pos = positions[end.x as usize][end.y as usize];
             let size = 100.0;
             let roundes = 0.2;
             let color = Color::new(255, 0, 0, (255.0 * self.opacity) as u8);

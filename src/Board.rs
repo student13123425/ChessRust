@@ -228,6 +228,42 @@ impl Board {
             }
         }
         return out;
+    }pub fn get_if_low_material(&self) -> bool {
+        let a1 = self.get_pice_counts(false);
+        let a2 = self.get_pice_counts(true);
+        let mut empty_pice_type = vec![0, 0];
+        for i in 0..6 {
+            if a1[i] == 0 {
+                empty_pice_type[0] += 1;
+            }
+            if a2[i] == 0 {
+                empty_pice_type[1] += 1;
+            }
+        }
+        let is_have_materieal_1 = a1[1] > 0 || a1[2] > 0 || a1[5] > 0;
+        let is_have_materieal_2 = a2[1] > 0 || a2[2] > 0 || a2[5] > 0;
+        if is_have_materieal_1 || is_have_materieal_2 {
+            return false;
+        }
+        if empty_pice_type[0] == 4 || empty_pice_type[1] == 4 {
+            let mut buffer = vec![false, false];
+            for i in 0..6 {
+                if a1[i] > 1 {
+                    buffer[0] = true;
+                }
+                if a2[i] > 1 {
+                    buffer[1] = true;
+                }
+            }
+            if buffer[0] || buffer[1] {
+                return false;
+            }
+
+        }
+        if empty_pice_type[0] == 5 || empty_pice_type[1] == 5 {
+            return true;
+        }
+        return false;
     }
     pub fn execute_move(&mut self, move_obj: &Move) ->bool{
         if move_obj.is_castling {

@@ -112,7 +112,7 @@ impl Game {
         return false;
     }
     pub fn get_if_draw(&mut self)->bool{
-        if(self.moveing_pice_buffer>100){
+        if(self.moveing_pice_buffer>100||self.board.get_if_low_material()){
             return true
         }
         return false

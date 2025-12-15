@@ -206,6 +206,29 @@ impl Board {
         }
         return board_state[y as usize][x as usize];
     }
+    pub fn get_pice_counts(&self, side: bool) -> Vec<i32> {
+        let mut out = vec![0, 0, 0, 0, 0, 0];
+        let state = self.get_board_state();
+        for i in 0..8 {
+            for j in 0..8 {
+                let mut v = state[i][j];
+                if v == -1 {
+                    continue;
+                }
+                if side && v >= 8 {
+                    continue;
+                }
+                if !side && v < 8 {
+                    continue;
+                }
+                if v >= 8 {
+                    v -= 8;
+                }
+                out[v as usize] += 1;
+            }
+        }
+        return out;
+    }
     pub fn execute_move(&mut self, move_obj: &Move) ->bool{
         if move_obj.is_castling {
             self.execute_castle_move(move_obj);

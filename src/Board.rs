@@ -3,7 +3,9 @@ use crate::Aox::{get_board_draw_positions, Vec2D};
 use crate::Pice::Pice;
 use crate::PicePosibleMoves::PosibleMoves;
 use crate::TextureMap::TextureMap;
+use crate::Move::Move;
 
+#[derive(Clone)]
 pub struct Board {
     pub BlackPices: Vec<Pice>,
     pub WhitePices: Vec<Pice>,
@@ -106,21 +108,39 @@ impl Board {
         }
         return board
     }
-    pub fn is_checK_mate(&self)->bool{
+    pub fn is_check_mate(&self,side:bool)->i32{
         let is_check=self.is_check();
         if(is_check==0){
-            return false;
+            return 0;
         }
-        let mut oposite_pices=&self.BlackPices;
+        let mut pices=&self.WhitePices;
         if(is_check==2){
-            oposite_pices=&self.WhitePices;
+            pices=&self.BlackPices;
         }
-
         let mut moves=PosibleMoves::new();
-        for pice in oposite_pices{
-            //todo
+        for pice in pices{
+            moves.compute_moves(pice,&self);
+            for m in &moves.moves{
+                let side=m.side;
+                let is_check_local=self.is_move_resoult_in_check(m,side);
+                if(!is_check_local){
+                    return 0;
+                }
+            }
         }
-        return false;
+        return is_check;
+    }
+    pub fn is_move_resoult_in_check(&self,m:&Move,side:bool)->bool{
+        let mut b=self.clone();
+        b.execute_move(m);
+        let v=b.is_check();
+        if(side==true&&v==1){
+            return true;
+        }
+        if(side==false&&v==2){
+            return true;
+        }
+        return false
     }
     pub fn is_check(&self,)->i32{
         let mut kings:Vec<Vec2D>=vec![];
@@ -173,5 +193,77 @@ impl Board {
             }
         }
         return false;
+    }
+
+    pub fn execute_move(&mut self, move_obj: &Move) {
+        if move_obj.is_castling {
+            self.execute_castle_move(move_obj);
+            return;
+        }
+
+        let start = move_obj.get_start_pos();
+        let end = move_obj.get_end_pos();
+
+        {
+            let pices = if move_obj.side { &mut self.WhitePices } else { &mut self.BlackPices };
+            for p in pices.iter_mut() {
+                if !p.is_taken {
+                    let is_selected_pice = p.pos.compair(&start);
+                    if is_selected_pice {
+                        p.move_pice(&end);
+                        break;
+                    }
+                }
+            }
+        }
+        {
+            let opponent_pices = if !move_obj.side { &mut self.WhitePices } else { &mut self.BlackPices };
+            for p in opponent_pices {
+                if !p.is_taken && p.pos.compair(&end) {
+                    p.take();
+                    break;
+                }
+            }
+        }
+    }
+
+    fn execute_castle_move(&mut self, move_obj: &Move) {
+        let mut side_y = 7;
+        let mut pices = &mut self.WhitePices;
+        if move_obj.side {
+            side_y = 0;
+            pices = &mut self.BlackPices;
+        }
+        let rook_new = vec![3, 5];
+        let king_new = vec![2, 6];
+        let mut king_pos_new = Vec2D::new(king_new[0], side_y);
+        let mut rook_pos_new = Vec2D::new(rook_new[0], side_y);
+        let mut rook_old: Vec2D = Vec2D::new(0, side_y);
+        let king_old: Vec2D = Vec2D::new(4, side_y);
+        if move_obj.get_end_pos().y == king_new[1] {
+            king_pos_new.x = king_new[1];
+            rook_pos_new.x = rook_new[1];
+            rook_old.x = 7;
+        }
+        for p in pices {
+            if p.pos.compair(&king_old) && p.TextureID == 0 {
+                p.move_pice(&king_pos_new);
+            } else if p.pos.compair(&rook_old) && p.TextureID == 2 {
+                p.move_pice(&rook_pos_new);
+            }
+        }
+    }
+
+    pub fn transform_pawn(&mut self, side: bool, pice_id: i32) {
+        let mut pices = &mut self.BlackPices;
+        if !side {
+            pices = &mut self.WhitePices;
+        }
+        for p in pices {
+            if p.TextureID == 5 && (p.pos.x == 7 || p.pos.x == 0) {
+                p.TextureID = pice_id;
+                return;
+            }
+        }
     }
 }

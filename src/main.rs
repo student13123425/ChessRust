@@ -11,6 +11,7 @@ mod PiceSelectMenu;
 mod GameOverMenu;
 mod Button;
 mod AudioPlayer;
+mod MainMenu;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -25,7 +26,10 @@ fn main() {
 
     let mut game = Game::Game::new(&mut rl, &thread);
     let mut game_over_menu = GameOverMenu::GameOverMenu::new();
+    let mut main_menu = MainMenu::MainMenu::new();
+    
     let mut should_reset = false;
+    let mut in_menu = true;
 
     while !rl.window_should_close() {
         if should_reset {
@@ -36,16 +40,28 @@ fn main() {
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
 
-        game.render(&mut d);
-
-        if game.game_over_state != -1 {
-            game_over_menu.render(&mut d, game.game_over_state);
-
-            if game_over_menu.update(&mut d) {
-                should_reset = true;
+        if in_menu {
+            main_menu.render(&mut d);
+            let menu_action = main_menu.update(&mut d);
+            
+            if menu_action == 0 {
+                in_menu = false;
+                should_reset = true; 
+            } else if menu_action == 1 {
+                //todo player vs AI
             }
         } else {
-            game.update(&mut d);
+            game.render(&mut d);
+
+            if game.game_over_state != -1 {
+                game_over_menu.render(&mut d, game.game_over_state);
+
+                if game_over_menu.update(&mut d) {
+                    should_reset = true;
+                }
+            } else {
+                game.update(&mut d);
+            }
         }
 
         d.draw_fps(10, 10);

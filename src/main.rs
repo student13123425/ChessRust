@@ -9,6 +9,7 @@ mod Game;
 mod Rendering;
 mod PiceSelectMenu;
 mod GameOverMenu;
+mod Button;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -36,7 +37,7 @@ fn main() {
 
         game.render(&mut d);
 
-        if game.game_over_state != -1 {
+        if game.game_over_state != -1 true{
             game_over_menu.render(&mut d, game.game_over_state);
 
             if game_over_menu.update(&mut d) {

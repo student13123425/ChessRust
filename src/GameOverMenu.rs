@@ -1,68 +1,98 @@
 use raylib::prelude::*;
-use crate::Aox::{Rect2D, Vec2D};
+use crate::Button::Button;
 
 pub struct GameOverMenu {
-    pub reset_button: Rect2D,
-    pub exit_button: Rect2D,
+    pub reset_button: Button,
+    pub exit_button: Button,
 }
 
 impl GameOverMenu {
     pub fn new() -> Self {
+        // Colors inspired by "chess.com"
+        // Primary Action (Play Again) -> Greenish
+        let play_green = Color::new(129, 182, 76, 255);
+        let play_green_hover = Color::new(169, 212, 116, 255);
+        
+        // Secondary Action (Exit) -> Grayish
+        let exit_gray = Color::new(50, 50, 50, 255);
+        let exit_gray_hover = Color::new(70, 70, 70, 255);
+        
         Self {
-            // Rect2D::new(x, y, width, height)
-            // Creating buttons 200px wide and 100px tall centered horizontally
-            reset_button: Rect2D::new(400, 500, 200, 100),
-            exit_button: Rect2D::new(400, 700, 200, 100),
+            reset_button: Button::new(
+                350.0, 500.0, 300.0, 70.0, 
+                "Play Again", 
+                play_green, 
+                play_green_hover, 
+                Color::WHITE
+            ),
+            exit_button: Button::new(
+                350.0, 600.0, 300.0, 70.0, 
+                "Exit", 
+                exit_gray, 
+                exit_gray_hover, 
+                Color::WHITE
+            ),
         }
     }
 
     pub fn render(&mut self, d: &mut RaylibDrawHandle, game_over_state: i32) {
+        let screen_width = d.get_screen_width();
+        let screen_height = d.get_screen_height();
+
+        // 1. Draw Semi-transparent full-screen overlay
+        d.draw_rectangle(0, 0, screen_width, screen_height, Color::new(0, 0, 0, 150));
+
+        // 2. Draw Modal Background (Centered Card)
+        let modal_width = 500;
+        let modal_height = 500;
+        let modal_x = (screen_width - modal_width) / 2;
+        let modal_y = (screen_height - modal_height) / 2;
+
+        let modal_rect = Rectangle::new(
+            modal_x as f32, 
+            modal_y as f32, 
+            modal_width as f32, 
+            modal_height as f32
+        );
+
+        d.draw_rectangle_rounded(modal_rect, 0.1, 10, Color::new(38, 37, 34, 255)); // Dark background like chess.com
+
+        // 3. Draw Title Text
         let text = match game_over_state {
-            0 => "Stale Mate",
+            0 => "Stalemate",
             1 => "White Wins",
             2 => "Black Wins",
             3 => "Draw",
             _ => "Game Over",
         };
 
-        // Fix 1: Use 'd.measure_text' instead of global 'measure_text'
-        let text_width = d.measure_text(text, 50);
-        d.draw_text(text, 500 - (text_width / 2), 200, 50, Color::BLACK);
+        let title_font_size = 50;
+        let text_width = d.measure_text(text, title_font_size);
+        let text_x = modal_x + (modal_width - text_width) / 2;
+        let text_y = modal_y + 80;
 
-        // Fix 2: Use .x, .y, .width, .height from Aox.rs instead of .min/.max
+        d.draw_text(text, text_x, text_y, title_font_size, Color::WHITE);
 
-        // Draw Reset Button
-        d.draw_rectangle(
-            self.reset_button.x,
-            self.reset_button.y,
-            self.reset_button.width,
-            self.reset_button.height,
-            Color::BLUE
-        );
-        d.draw_text("Play Again", self.reset_button.x + 20, self.reset_button.y + 35, 30, Color::WHITE);
-
-        // Draw Exit Button
-        d.draw_rectangle(
-            self.exit_button.x,
-            self.exit_button.y,
-            self.exit_button.width,
-            self.exit_button.height,
-            Color::RED
-        );
-        d.draw_text("Exit", self.exit_button.x + 70, self.exit_button.y + 35, 30, Color::WHITE);
+        // 4. Render Buttons
+        // We might need to keep button positions relative to window size if we wanted full responsiveness,
+        // but for now hardcoded centered positions (updated in new()) or updating them here is fine.
+        // Since the window size is fixed (1000x1100), fixed coordinates work.
+        
+        self.reset_button.render(d);
+        self.exit_button.render(d);
     }
 
     pub fn update(&mut self, d: &mut RaylibDrawHandle) -> bool {
-        let mouse_pos = Vec2D::new(d.get_mouse_x(), d.get_mouse_y());
-
-        if d.is_mouse_button_released(MouseButton::MOUSE_BUTTON_LEFT) {
-            if self.reset_button.contains(mouse_pos) {
-                return true;
-            }
-            if self.exit_button.contains(mouse_pos) {
-                std::process::exit(0);
-            }
+        // Handle Reset
+        if self.reset_button.update(d) {
+            return true;
         }
+
+        // Handle Exit
+        if self.exit_button.update(d) {
+            std::process::exit(0);
+        }
+        
         return false;
     }
 }

@@ -52,6 +52,7 @@ impl Pice {
         self.is_moving=true;
         self.animation=0.0;
         self.LineBuffer=Line2D::new(Vec2D::new(self.pos.x,self.pos.y),end.clone());
+        self.pos = end.clone(); // Fix: Update position immediately for logic
         self.move_count+=1;
     }
     pub fn compute_position(&self, positions: &Vec<Vec<Vec2D>>) -> Vec2D {

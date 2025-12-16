@@ -37,7 +37,7 @@ fn main() {
 
         game.render(&mut d);
 
-        if game.game_over_state != -1 true{
+        if game.game_over_state != -1 {
             game_over_menu.render(&mut d, game.game_over_state);
 
             if game_over_menu.update(&mut d) {

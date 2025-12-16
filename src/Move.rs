@@ -8,7 +8,8 @@ pub struct Move {
     pub piece_id: i32,
     pub side: bool,
     pub is_castling: bool,
-    pub transform_pawn:i32
+    pub transform_pawn:i32,
+    pub is_en_passant: bool
 }
 
 impl Move {
@@ -19,7 +20,8 @@ impl Move {
             piece_id,
             side,
             is_castling,
-            transform_pawn:-1
+            transform_pawn:-1,
+            is_en_passant: false
         }
     }
 
@@ -32,7 +34,8 @@ impl Move {
             piece_id,
             side,
             is_castling,
-            transform_pawn:-1
+            transform_pawn:-1,
+            is_en_passant: false
         }
     }
     pub fn transform_pawn_move(pos:Vec2D,new_value:i32,side:bool)->Self{
@@ -44,7 +47,8 @@ impl Move {
             end_sq,
             piece_id:5,
             side:side,
-            is_castling:false
+            is_castling:false,
+            is_en_passant: false
         }
     }
     pub fn to_string(&self) -> String {

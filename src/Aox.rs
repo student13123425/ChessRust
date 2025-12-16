@@ -114,7 +114,7 @@ pub fn swap_on_matrix(input: &mut Vec<Vec<i32>>, p1: Vec2D, p2: Vec2D) {
     input[p2_x][p2_y] = v;
 }
 
-pub fn get_string_repeted_count(mut input: &Vec<String>) -> i32 {
+pub fn get_string_repeted_count(input: &mut Vec<String>) -> i32 {
     if input.is_empty() {
         return 0;
     }

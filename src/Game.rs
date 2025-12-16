@@ -64,7 +64,9 @@ impl Game {
     }
     pub fn process_pawn_select_pice(&mut self,side:bool,pice_id:i32){
         self.board.transform_pawn(side, pice_id);
-        self.hystory.push(Move::transform_pawn_move(self.selected_pice,pice_id,side));
+        if let Some(last_move) = self.hystory.last_mut() {
+            last_move.transform_pawn = pice_id;
+        }
     }
     pub fn update(&mut self,d: &mut RaylibDrawHandle){
         let is_select= self.get_is_to_select_transform();
@@ -114,7 +116,7 @@ impl Game {
         return false;
     }
     pub fn get_if_draw(&mut self)->bool{
-        if(self.moveing_pice_buffer>100||self.board.get_if_low_material()||get_string_repeted_count(&self.hystory_of_state)>=3){
+        if self.moveing_pice_buffer > 100 || self.board.get_if_low_material() || get_string_repeted_count(&mut self.hystory_of_state) >= 3 {
             return true
         }
         return false
@@ -125,7 +127,7 @@ impl Game {
         self.hystory_of_state.push(self.board.to_string(self.side));
         let is_take=self.board.execute_move(&move_obj);
         self.moveing_pice_buffer+=1;
-        if(is_take||is_pawn){
+        if is_take || is_pawn {
             self.moveing_pice_buffer=0;
         }
         self.side = !self.side;

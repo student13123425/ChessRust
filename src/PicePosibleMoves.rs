@@ -81,6 +81,12 @@ pub fn pawn_move(pice: &Pice, board: &Board) -> Vec<Vec2D> {
             out.push(Vec2D::new(x_value, pice.pos.y))
         }
     }
+
+    if let Some(target) = board.en_passant_target {
+        if target.x == front_x && (target.y == pice.pos.y - 1 || target.y == pice.pos.y + 1) {
+            out.push(target);
+        }
+    }
     out
 }
 
@@ -436,7 +442,17 @@ impl PosibleMoves {
         let side = pice.side;
         self.moves = Vec::new();
         for m in calculated_moves {
-            let move_item = Move::from_pos(pice.pos.clone(), m.clone(), pice.TextureID, pice.side, false);
+            let mut is_en_passant = false;
+            if pice.TextureID == 5 {
+                if let Some(target) = board.en_passant_target {
+                    if m.x == target.x && m.y == target.y {
+                        is_en_passant = true;
+                    }
+                }
+            }
+            let mut move_item = Move::from_pos(pice.pos.clone(), m.clone(), pice.TextureID, pice.side, false);
+            move_item.is_en_passant = is_en_passant;
+
             if check_safety {
                 if !board.is_move_resoult_in_check(&move_item, side) {
                     self.moves.push(move_item);

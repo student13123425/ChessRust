@@ -9,7 +9,8 @@ use crate::Move::Move;
 pub struct Board {
     pub BlackPices: Vec<Pice>,
     pub WhitePices: Vec<Pice>,
-    pub positions: Vec<Vec<Vec2D>>
+    pub positions: Vec<Vec<Vec2D>>,
+    pub en_passant_target: Option<Vec2D>
 }
 
 impl Board {
@@ -34,6 +35,7 @@ impl Board {
             BlackPices: black_pices,
             WhitePices: white_pices,
             positions: pos,
+            en_passant_target: None,
         }
     }
 
@@ -62,6 +64,7 @@ impl Board {
             BlackPices: black_pices,
             WhitePices: white_pices,
             positions: pos,
+            en_passant_target: None,
         }
     }
 
@@ -154,7 +157,8 @@ impl Board {
         }
         let mut posbile_moves=PosibleMoves::new();
         for pice in &self.WhitePices{
-            posbile_moves.compute_moves(pice,self,true);
+            // Pass false here to prevent infinite recursion
+            posbile_moves.compute_moves(pice,self,false);
             for pos in &posbile_moves.moves{
                 if kings[1].compair(&pos.get_end_pos()) {
                     return 2;
@@ -162,7 +166,8 @@ impl Board {
             }
         }
         for pice in &self.BlackPices{
-            posbile_moves.compute_moves(pice,self,true);
+            // Pass false here to prevent infinite recursion
+            posbile_moves.compute_moves(pice,self,false);
             for pos in &posbile_moves.moves{
                 if kings[0].compair(&pos.get_end_pos()) {
                     return 1;
@@ -284,11 +289,18 @@ impl Board {
     pub fn execute_move(&mut self, move_obj: &Move) ->bool{
         if move_obj.is_castling {
             self.execute_castle_move(move_obj);
+            self.en_passant_target = None;
             return false;
         }
 
         let start = move_obj.get_start_pos();
         let end = move_obj.get_end_pos();
+
+        let mut next_en_passant_target = None;
+        if move_obj.piece_id == 5 && (start.x - end.x).abs() == 2 {
+             next_en_passant_target = Some(Vec2D::new((start.x + end.x) / 2, start.y));
+        }
+        self.en_passant_target = next_en_passant_target;
 
         {
             let pices = if move_obj.side { &mut self.WhitePices } else { &mut self.BlackPices };
@@ -302,6 +314,18 @@ impl Board {
                 }
             }
         }
+
+        if move_obj.is_en_passant {
+             let capture_pos = Vec2D::new(start.x, end.y);
+             let opponent_pices = if !move_obj.side { &mut self.WhitePices } else { &mut self.BlackPices };
+             for p in opponent_pices {
+                 if !p.is_taken && p.pos.compair(&capture_pos) {
+                     p.take();
+                     return true;
+                 }
+             }
+        }
+
         {
             let opponent_pices = if !move_obj.side { &mut self.WhitePices } else { &mut self.BlackPices };
             for p in opponent_pices {

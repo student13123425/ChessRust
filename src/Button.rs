@@ -25,15 +25,14 @@ impl Button {
     pub fn render(&self, d: &mut RaylibDrawHandle) {
         let draw_color = if self.is_hovered { self.hover_color } else { self.color };
         
-        // Draw rounded rectangle
         d.draw_rectangle_rounded(
             self.rect, 
-            0.3, // roundness
-            10,  // segments
+            0.3, 
+            10,
             draw_color
         );
         
-        // Center text
+        
         let font_size = 30;
         let text_width = d.measure_text(&self.text, font_size);
         let text_x = self.rect.x as i32 + (self.rect.width as i32 - text_width) / 2;
@@ -45,7 +44,6 @@ impl Button {
     pub fn update(&mut self, d: &mut RaylibDrawHandle) -> bool {
         let mouse_pos = d.get_mouse_position();
         
-        // Raylib's check_collision_point_rec is convenient here
         self.is_hovered = self.rect.check_collision_point_rec(mouse_pos);
 
         if self.is_hovered && d.is_mouse_button_released(MouseButton::MOUSE_BUTTON_LEFT) {

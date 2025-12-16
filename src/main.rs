@@ -10,6 +10,7 @@ mod Rendering;
 mod PiceSelectMenu;
 mod GameOverMenu;
 mod Button;
+mod AudioPlayer;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};

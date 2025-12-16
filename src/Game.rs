@@ -21,7 +21,8 @@ pub struct Game {
     pub hystory:Vec<Move>,
     pub pice_select_menu:PiceSelectMenu,
     pub moveing_pice_buffer:i32,
-    pub hystory_of_state:Vec<String>
+    pub hystory_of_state:Vec<String>,
+    pub game_over_state:i32,
 }
 
 impl Game {
@@ -36,7 +37,8 @@ impl Game {
             hystory:Vec::new(),
             pice_select_menu:PiceSelectMenu::new(),
             moveing_pice_buffer:0,
-            hystory_of_state:Vec::new()
+            hystory_of_state:Vec::new(),
+            game_over_state: -1
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
@@ -132,6 +134,15 @@ impl Game {
         }
         self.side = !self.side;
         self.hystory.push(move_obj);
+
+        if self.get_if_draw() {
+            self.game_over_state = 3;
+        } else {
+             let state = self.board.is_checkmate_or_stale_mate(self.side);
+             if state != -1 {
+                 self.game_over_state = state;
+             }
+        }
     }
     pub fn process_pice_select(&mut self, d: &mut RaylibDrawHandle){
         let values = self.board.get_pice_side(self.side);

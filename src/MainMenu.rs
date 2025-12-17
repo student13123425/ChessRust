@@ -49,7 +49,7 @@ impl MainMenu {
     }
 
     pub fn render(&self, d: &mut RaylibDrawHandle) {
-        d.clear_background(Color::new(48, 46, 43, 255)); // Chess.com dark background
+        d.clear_background(Color::new(48, 46, 43, 255)); 
 
         let title_text = "Chess Rust";
         let title_font_size = 80;

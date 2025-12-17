@@ -8,12 +8,9 @@ pub struct GameOverMenu {
 
 impl GameOverMenu {
     pub fn new() -> Self {
-        // Colors inspired by "chess.com"
-        // Primary Action (Play Again) -> Greenish
         let play_green = Color::new(129, 182, 76, 255);
         let play_green_hover = Color::new(169, 212, 116, 255);
         
-        // Secondary Action (Exit) -> Grayish
         let exit_gray = Color::new(50, 50, 50, 255);
         let exit_gray_hover = Color::new(70, 70, 70, 255);
         
@@ -39,10 +36,8 @@ impl GameOverMenu {
         let screen_width = d.get_screen_width();
         let screen_height = d.get_screen_height();
 
-        // 1. Draw Semi-transparent full-screen overlay
         d.draw_rectangle(0, 0, screen_width, screen_height, Color::new(0, 0, 0, 150));
 
-        // 2. Draw Modal Background (Centered Card)
         let modal_width = 500;
         let modal_height = 500;
         let modal_x = (screen_width - modal_width) / 2;
@@ -55,9 +50,8 @@ impl GameOverMenu {
             modal_height as f32
         );
 
-        d.draw_rectangle_rounded(modal_rect, 0.1, 10, Color::new(38, 37, 34, 255)); // Dark background like chess.com
+        d.draw_rectangle_rounded(modal_rect, 0.1, 10, Color::new(38, 37, 34, 255)); 
 
-        // 3. Draw Title Text
         let text = match game_over_state {
             0 => "Stalemate",
             1 => "White Wins",
@@ -73,22 +67,15 @@ impl GameOverMenu {
 
         d.draw_text(text, text_x, text_y, title_font_size, Color::WHITE);
 
-        // 4. Render Buttons
-        // We might need to keep button positions relative to window size if we wanted full responsiveness,
-        // but for now hardcoded centered positions (updated in new()) or updating them here is fine.
-        // Since the window size is fixed (1000x1100), fixed coordinates work.
-        
         self.reset_button.render(d);
         self.exit_button.render(d);
     }
 
     pub fn update(&mut self, d: &mut RaylibDrawHandle) -> bool {
-        // Handle Reset
         if self.reset_button.update(d) {
             return true;
         }
 
-        // Handle Exit
         if self.exit_button.update(d) {
             std::process::exit(0);
         }

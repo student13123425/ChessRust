@@ -1,7 +1,8 @@
 use std::thread::Thread;
-use raylib::drawing::RaylibDrawHandle;
+use raylib::drawing::{RaylibDraw, RaylibDrawHandle};
 use raylib::{RaylibHandle, RaylibThread};
 use raylib::ffi::MouseButton::MOUSE_BUTTON_LEFT;
+use raylib::prelude::Color;
 use crate::Aox::{get_click_rect, get_string_repeted_count, Rect2D, Vec2D};
 use crate::Background::draw_background;
 use crate::Board::Board;
@@ -10,6 +11,7 @@ use crate::Pice::Pice;
 use crate::PicePosibleMoves::PosibleMoves;
 use crate::PiceSelectMenu::PiceSelectMenu;
 use crate::TextureMap::TextureMap;
+use crate::Timer::Timer;
 
 pub struct Game {
     pub board: Board,
@@ -23,6 +25,8 @@ pub struct Game {
     pub moveing_pice_buffer:i32,
     pub hystory_of_state:Vec<String>,
     pub game_over_state:i32,
+    pub timer_white: Timer,
+    pub timer_black: Timer,
 }
 
 impl Game {
@@ -38,7 +42,9 @@ impl Game {
             pice_select_menu:PiceSelectMenu::new(),
             moveing_pice_buffer:0,
             hystory_of_state:Vec::new(),
-            game_over_state: -1
+            game_over_state: -1,
+            timer_white: Timer::new("10:00"),
+            timer_black: Timer::new("10:00"),
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){
@@ -49,7 +55,12 @@ impl Game {
         if is_select != 0 {
             self.pice_select_menu.render(d,&self.texture_map,is_select==2);
         }
+
+        d.draw_rectangle(0, 1000, 1000, 100, Color::new(48, 46, 43, 255));
+
         render_history(d,&self.hystory);
+        self.timer_white.render(d, Vec2D::new(80-30, 1030), 30);
+        self.timer_black.render(d, Vec2D::new(920+30, 1030), 30);
     }
     pub fn get_is_to_select_transform(&self)->i32{
         for p in self.board.WhitePices.iter(){
@@ -70,7 +81,23 @@ impl Game {
             last_move.transform_pawn = pice_id;
         }
     }
-    pub fn update(&mut self,d: &mut RaylibDrawHandle){
+    pub fn update(&mut self,d: &mut RaylibDrawHandle, dt: f32){
+        if self.game_over_state == -1 {
+            if self.side {
+                self.timer_white.start();
+                self.timer_black.stop();
+                if self.timer_white.update(dt) {
+                    self.game_over_state = 2;
+                }
+            } else {
+                self.timer_black.start();
+                self.timer_white.stop();
+                if self.timer_black.update(dt) {
+                    self.game_over_state = 1;
+                }
+            }
+        }
+
         let is_select= self.get_is_to_select_transform();
         if is_select!=0 {
             let selected=self.pice_select_menu.update(d);

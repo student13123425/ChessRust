@@ -101,8 +101,8 @@ impl Move {
 pub fn render_history(d: &mut RaylibDrawHandle, history: &Vec<Move>) {
     let font_size = 20;
     let padding = 10;
-    let area_start_y = 1000;
-    let area_height = 100;
+    let area_start_y = 1050;
+    let area_height = 50;
     let text_y = area_start_y + (area_height - font_size) / 2;
     let spacing = 15; // Space between move groups
     let mut current_x = 1000 - padding;
@@ -142,7 +142,7 @@ pub fn render_history(d: &mut RaylibDrawHandle, history: &Vec<Move>) {
 
         current_x -= text_width;
 
-        d.draw_text(&text_to_draw, current_x, text_y, font_size, Color::BLACK);
+        d.draw_text(&text_to_draw, current_x, text_y, font_size, Color::WHITE);
         current_x -= spacing;
         i -= step;
     }

@@ -34,10 +34,10 @@ impl Timer {
         self.running = false;
     }
 
-    pub fn update(&mut self, rl: &RaylibHandle) -> bool {
+    pub fn update(&mut self, dt: f32) -> bool {
         if self.running {
             if self.time_left > 0.0 {
-                self.time_left -= rl.get_frame_time();
+                self.time_left -= dt;
                 if self.time_left <= 0.0 {
                     self.time_left = 0.0;
                     self.running = false;

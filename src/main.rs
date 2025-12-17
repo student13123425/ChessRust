@@ -12,6 +12,7 @@ mod GameOverMenu;
 mod Button;
 mod AudioPlayer;
 mod MainMenu;
+mod Timer;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -37,6 +38,7 @@ fn main() {
             should_reset = false;
         }
 
+        let dt = rl.get_frame_time();
         let mut d = rl.begin_drawing(&thread);
         d.clear_background(Color::RAYWHITE);
 
@@ -48,7 +50,6 @@ fn main() {
                 in_menu = false;
                 should_reset = true; 
             } else if menu_action == 1 {
-                //todo player vs AI
             }
         } else {
             game.render(&mut d);
@@ -60,7 +61,7 @@ fn main() {
                     should_reset = true;
                 }
             } else {
-                game.update(&mut d);
+                game.update(&mut d, dt);
             }
         }
 

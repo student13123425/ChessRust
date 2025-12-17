@@ -13,6 +13,7 @@ mod Button;
 mod AudioPlayer;
 mod MainMenu;
 mod Timer;
+mod TimeSelectMenu;
 
 use raylib::prelude::*;
 use crate::Aox::{get_board_draw_positions, Vec2D};
@@ -25,16 +26,19 @@ fn main() {
         .title("Raylib Rust Chess Board")
         .build();
 
-    let mut game = Game::Game::new(&mut rl, &thread);
+    let mut current_time_selection = 4;
+    let mut game = Game::Game::new(&mut rl, &thread, current_time_selection);
     let mut game_over_menu = GameOverMenu::GameOverMenu::new();
     let mut main_menu = MainMenu::MainMenu::new();
+    let mut time_select_menu = TimeSelectMenu::TimeSelectMenu::new();
     
     let mut should_reset = false;
     let mut in_menu = true;
+    let mut in_time_select = false;
 
     while !rl.window_should_close() {
         if should_reset {
-            game = Game::Game::new(&mut rl, &thread);
+            game = Game::Game::new(&mut rl, &thread, current_time_selection);
             should_reset = false;
         }
 
@@ -48,8 +52,16 @@ fn main() {
             
             if menu_action == 0 {
                 in_menu = false;
-                should_reset = true; 
+                in_time_select = true;
             } else if menu_action == 1 {
+            }
+        } else if in_time_select {
+            time_select_menu.render(&mut d);
+            let selection = time_select_menu.update(&mut d);
+            if selection != -1 {
+                current_time_selection = selection;
+                in_time_select = false;
+                should_reset = true;
             }
         } else {
             game.render(&mut d);

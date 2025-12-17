@@ -157,7 +157,6 @@ impl Board {
         }
         let mut posbile_moves=PosibleMoves::new();
         for pice in &self.WhitePices{
-            // Pass false here to prevent infinite recursion
             posbile_moves.compute_moves(pice,self,false);
             for pos in &posbile_moves.moves{
                 if kings[1].compair(&pos.get_end_pos()) {
@@ -166,7 +165,6 @@ impl Board {
             }
         }
         for pice in &self.BlackPices{
-            // Pass false here to prevent infinite recursion
             posbile_moves.compute_moves(pice,self,false);
             for pos in &posbile_moves.moves{
                 if kings[0].compair(&pos.get_end_pos()) {

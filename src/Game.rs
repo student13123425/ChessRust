@@ -30,7 +30,16 @@ pub struct Game {
 }
 
 impl Game {
-    pub fn new(rl:&mut RaylibHandle,raylib_thread: &RaylibThread) -> Self {
+    pub fn new(rl:&mut RaylibHandle,raylib_thread: &RaylibThread, time_selection: i32) -> Self {
+        let time_str = match time_selection {
+            0 => "01:00",
+            2 => "03:00",
+            3 => "05:00",
+            4 => "10:00",
+            5 => "30:00",
+            _ => "10:00",
+        };
+
         Self {
             board: Board::new(),
             selected_pice:Vec2D::new(-1,-1),
@@ -43,8 +52,8 @@ impl Game {
             moveing_pice_buffer:0,
             hystory_of_state:Vec::new(),
             game_over_state: -1,
-            timer_white: Timer::new("10:00"),
-            timer_black: Timer::new("10:00"),
+            timer_white: Timer::new(time_str),
+            timer_black: Timer::new(time_str),
         }
     }
     pub fn render(&mut self, d: &mut RaylibDrawHandle){

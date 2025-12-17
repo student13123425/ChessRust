@@ -104,7 +104,7 @@ pub fn render_history(d: &mut RaylibDrawHandle, history: &Vec<Move>) {
     let area_start_y = 1050;
     let area_height = 50;
     let text_y = area_start_y + (area_height - font_size) / 2;
-    let spacing = 15; // Space between move groups
+    let spacing = 15; 
     let mut current_x = 1000 - padding;
     let mut i = (history.len() as i32) - 1;
 
